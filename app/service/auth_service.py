@@ -21,7 +21,7 @@ JWT_REFRESH_SECRET_KEY = settings.JWT_REFRESH_SECRET_KEY
 
 password_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
-
+#1
 
 def verify_password(plain_password, hashed_password):
     return password_context.verify(plain_password, hashed_password)
