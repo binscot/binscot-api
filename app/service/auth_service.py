@@ -21,7 +21,9 @@ JWT_REFRESH_SECRET_KEY = settings.JWT_REFRESH_SECRET_KEY
 
 password_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
-#1
+
+
+# 1
 
 def verify_password(plain_password, hashed_password):
     return password_context.verify(plain_password, hashed_password)
@@ -54,7 +56,8 @@ def create_jwt_token(data: dict, token_type: Token):
     return encoded_jwt
 
 
-async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], token_type: Token,db: Session = Depends(get_db)):
+async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], token_type: Token,
+                           db: Session = Depends(get_db)):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -99,4 +102,3 @@ def verify_token(token: str, secret_key: str, algorithm: str, db: Session):
         raise HTTPException(status_code=401, detail="Token has expired")
     except JWTError:
         raise HTTPException(status_code=401, detail="Invalid token")
-
