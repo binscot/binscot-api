@@ -22,6 +22,7 @@ router = APIRouter()
 def create_user(user: user_schemas.UserCreate, db: Session = Depends(get_db)):
     UserInDB = user_crud.get_user_by_username(db, username=user.username)
     if UserInDB:
+        # raise HTTPException(status_code=400, detail="username already registered")
         raise HTTPException(status_code=400, detail="username already registered")
     user = user_crud.create_user(db=db, user=user)
     return signup_res_dto.User(id=user.id, username=user.username)
