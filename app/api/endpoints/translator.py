@@ -9,8 +9,8 @@ router = APIRouter()
 
 PAPAGO_CLIENT_ID = settings.NAVER_CLIENT_ID
 PAPAGO_CLIENT_SECRET = settings.NAVER_CLIENT_SECRET
-PAPAGO_URL = "https://openapi.naver.com/v1/papago/n2mt"
-PAPAGO_DETECT_LANGUAGE_URL = "https://openapi.naver.com/v1/papago/detectLangs"
+PAPAGO_URL = settings.PAPAGO_URL
+PAPAGO_DETECT_LANGUAGE_URL = settings.PAPAGO_DETECT_LANGUAGE_URL
 
 
 @router.post("/translatorText", response_model=TranslationResponse)

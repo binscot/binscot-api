@@ -56,7 +56,7 @@ def create_jwt_token(data: dict, token_type: Token):
     return encoded_jwt
 
 
-async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], token_type: Token,
+async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)],
                            db: Session = Depends(get_db)):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
@@ -64,7 +64,7 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], token_
         headers={"WWW-Authenticate": "Bearer"},
     )
     try:
-        payload = jwt.decode(token, Token.get_key(token_type), algorithms=[ALGORITHM])
+        payload = jwt.decode(token, Token.get_key(Token.ACCESS_TOKEN), algorithms=[ALGORITHM])
         username: str = payload.get("sub")
         if username is None:
             raise credentials_exception
