@@ -1,5 +1,5 @@
 import json
-
+import logging
 import requests
 from fastapi import HTTPException
 
@@ -88,11 +88,14 @@ def send_server_state_kakao_message():
         "template_object": json.dumps(params)
     }
 
+    # requests.post(KAKAO_SEND_URL, headers=KA_HEADER, data=payload)
     response = requests.post(KAKAO_SEND_URL, headers=KA_HEADER, data=payload)
 
     if response.status_code == 200:
+        logging.info("카카오 피드 메시지가 전송되었습니다.")
         return {"status_code": 200, "message": "카카오 피드 메시지가 전송되었습니다."}
     else:
+        logging.info("카카오 피드 메시지 전송에 실패했습니다.")
         raise HTTPException(status_code=500, detail="카카오 피드 메시지 전송에 실패했습니다.")
 
 
