@@ -15,7 +15,7 @@ SMTP_PASSWORD = settings.SMTP_PASSWORD
 
 
 def send_email(email_data):
-    cat_url = miscellaneous_util.get_random_cat_image()
+
     try:
         # 이메일 설정
         msg = MIMEMultipart()
@@ -23,12 +23,7 @@ def send_email(email_data):
         msg['To'] = email_data.to_email
         msg['Subject'] = email_data.subject
         html_body = f"""
-               <html>
-                   <body>
-                       <p>{email_data.body}</p>
-                       <img src={cat_url}>
-                   </body>
-               </html>
+              {email_data.body}
                """
         msg.attach(MIMEText(html_body, 'html'))
 
