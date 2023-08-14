@@ -21,7 +21,7 @@ def read_posts(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return posts
 
 
-@router.get("/{post_id}", response_model=post_schemas.Post)
+@router.get("/read_post/{post_id}", response_model=post_schemas.Post)
 def read_post(post_id: int, db: Session = Depends(get_db)):
     db_post = post_crud.get_post(db, post_id=post_id)
     if db_post is None:
