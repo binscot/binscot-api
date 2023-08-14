@@ -55,11 +55,9 @@ def get_weather_now(city, country_code):
 
 
 def get_weather_data_json(city, country_code, url):
-    location = map_service.get_location_by_city(city=city, country_code=country_code)
     params = {
-        "lat": location['lat'],
-        "lon": location['lon'],
-        "appid": OPENWEATHERMAP_API_KEY
+        "q": f"{city},{country_code}",
+        "appid": OPENWEATHERMAP_API_KEY,
     }
 
     return requests.get(url, params=params).json()
