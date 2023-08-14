@@ -35,6 +35,12 @@ class Settings(BaseSettings):
     OPENWEATHERMAP_WEATHER_WEEK_URL: str = os.getenv('OPENWEATHERMAP_WEATHER_WEEK_URL')
     OPENWEATHERMAP_WEATHER_TODAY_URL: str = os.getenv('OPENWEATHERMAP_WEATHER_TODAY_URL')
 
+    SMTP_SERVER: str = os.getenv('SMTP_SERVER')
+    SMTP_PORT: int = os.getenv('SMTP_PORT')
+    SMTP_USERNAME: str = os.getenv('SMTP_USERNAME')
+    SMTP_PASSWORD: str = os.getenv('SMTP_PASSWORD')
+    OWNER_MAIL: str = os.getenv('OWNER_MAIL')
+
     class Config:
         case_sensitive = True
 
