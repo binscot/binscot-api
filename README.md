@@ -9,7 +9,7 @@
 # docker
 
 이미지생성
-docker build -t [repo]/[tag]:latest . 
+docker build -t [repo]/[tag]:latest . -f DockerFile    
 
 push
 
