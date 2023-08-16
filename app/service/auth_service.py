@@ -14,7 +14,7 @@ from app.data_type.token_type import Token
 from app.database.database import get_db
 from app.dto import signup_res_dto
 from app.schemas import user_schemas
-from app.schemas.token_schemas import TokenData
+from app.schemas import token_schemas
 from app.schemas.user_schemas import User
 from fastapi.responses import JSONResponse
 
@@ -50,11 +50,9 @@ def login(db, form_data):
 
     access_token = create_jwt_token(data={"sub": user.username}, token_type=Token.ACCESS_TOKEN)
     refresh_token = create_jwt_token(data={"sub": user.username}, token_type=Token.REFRESH_TOKEN)
-    response = JSONResponse({
-        "access_token": access_token,
-        "token_type": "bearer",
-        "username": user.username
-    })
+
+    response = JSONResponse(
+        content=token_schemas.Token(access_token=access_token, token_type="bearer", username=user.username).__dict__)
     response.set_cookie(key="refresh_token", value=refresh_token, httponly=True)
     return response
 
@@ -108,7 +106,7 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)],
         username: str = payload.get("sub")
         if username is None:
             raise credentials_exception
-        token_data = TokenData(username=username)
+        token_data = token_schemas.TokenData(username=username)
     except JWTError:
         raise credentials_exception
     user = user_crud.get_user_by_username(db, username=token_data.username)
