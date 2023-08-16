@@ -1,8 +1,9 @@
-from fastapi import FastAPI, HTTPException
 import smtplib
-from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from app.utils import miscellaneous_util
+from email.mime.text import MIMEText
+
+from fastapi import FastAPI, HTTPException
+
 from app.core.config import settings
 
 app = FastAPI()
