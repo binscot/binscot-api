@@ -1,9 +1,9 @@
-from fastapi import APIRouter
-import requests
 from datetime import datetime, timedelta
 
+import requests
+from fastapi import APIRouter
+
 from app.core.config import settings
-from app.service import map_service
 
 router = APIRouter()
 
