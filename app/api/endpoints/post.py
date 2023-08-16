@@ -1,11 +1,12 @@
 from typing import List
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from app.crud import post_crud
 from app.database.database import get_db
 from app.schemas import post_schemas
+from app.service import post_service
 
 router = APIRouter()
 
@@ -17,13 +18,9 @@ def create_post(user_id: int, post: post_schemas.PostCreate, db: Session = Depen
 
 @router.get("/", response_model=List[post_schemas.Post])
 def read_posts(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    posts = post_crud.get_posts(db, skip=skip, limit=limit)
-    return posts
+    return post_crud.get_posts(db, skip=skip, limit=limit)
 
 
 @router.get("/read_post/{post_id}", response_model=post_schemas.Post)
 def read_post(post_id: int, db: Session = Depends(get_db)):
-    db_post = post_crud.get_post(db, post_id=post_id)
-    if db_post is None:
-        raise HTTPException(status_code=404, detail="Post not found")
-    return db_post
+    return post_service.read_post(db, post_id)

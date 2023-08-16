@@ -2,7 +2,7 @@ import httpx
 from fastapi import APIRouter, HTTPException
 
 from app.core.config import settings
-from app.schemas.translator_schemas import TranslationRequest
+from app.schemas import translator_schemas
 
 router = APIRouter()
 
@@ -12,7 +12,7 @@ PAPAGO_URL = settings.PAPAGO_URL
 PAPAGO_DETECT_LANGUAGE_URL = settings.PAPAGO_DETECT_LANGUAGE_URL
 
 
-async def translate_text(translationRequest: TranslationRequest):
+async def translate_text(translationRequest: translator_schemas.TranslationRequest):
     text = translationRequest.text
     source_lang = translationRequest.source_lang
     target_lang = translationRequest.target_lang
