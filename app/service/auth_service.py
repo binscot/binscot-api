@@ -3,17 +3,20 @@ from typing import Annotated
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
-from jose import JWTError, jwt
+
 from jwt.exceptions import ExpiredSignatureError
 from passlib.context import CryptContext
 from sqlalchemy.orm import Session
-
+from jose import JWTError, jwt
 from app.core.config import settings
 from app.crud import user_crud
-from app.database.database import get_db
 from app.data_type.token_type import Token
+from app.database.database import get_db
+from app.dto import signup_res_dto
+from app.schemas import user_schemas
 from app.schemas.token_schemas import TokenData
 from app.schemas.user_schemas import User
+from fastapi.responses import JSONResponse
 
 ALGORITHM = settings.HASH_ALGORITHM
 JWT_SECRET_KEY = settings.JWT_SECRET_KEY
@@ -24,6 +27,45 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
 # 1
+def create_access_token(db, request):
+    user = verify_token(request.cookies.get(Token.REFRESH_TOKEN), Token.get_key(Token.REFRESH_TOKEN),
+                        settings.HASH_ALGORITHM, db)
+    access_token = create_jwt_token(data={"sub": user.username}, token_type=Token.ACCESS_TOKEN)
+    response = JSONResponse({
+        "access_token": access_token,
+        "token_type": "bearer",
+        "username": user.username
+    })
+    return response
+
+
+def login(db, form_data):
+    user = authenticate_user(db, form_data.username, form_data.password)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    access_token = create_jwt_token(data={"sub": user.username}, token_type=Token.ACCESS_TOKEN)
+    refresh_token = create_jwt_token(data={"sub": user.username}, token_type=Token.REFRESH_TOKEN)
+    response = JSONResponse({
+        "access_token": access_token,
+        "token_type": "bearer",
+        "username": user.username
+    })
+    response.set_cookie(key="refresh_token", value=refresh_token, httponly=True)
+    return response
+
+
+def create_user(db, user: user_schemas.UserCreate):
+    UserInDB = user_crud.get_user_by_username(db, username=user.username)
+    if UserInDB:
+        raise HTTPException(status_code=400, detail="username already registered")
+    user = user_crud.create_user(db=db, user=user)
+    return signup_res_dto.User(id=user.id, username=user.username)
+
 
 def verify_password(plain_password, hashed_password):
     return password_context.verify(plain_password, hashed_password)
@@ -43,8 +85,6 @@ def authenticate_user(db, username: str, password: str):
 
 
 def create_jwt_token(data: dict, token_type: Token):
-    print(token_type)
-    print(Token.get_key(token_type))
     if token_type is None:
         raise HTTPException(status_code=500, detail="token_type is None")
     else:
