@@ -5,14 +5,13 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
 from app.database.database import get_db
-from app.dto import signup_res_dto
 from app.schemas import user_schemas, token_schemas
 from app.service import auth_service
 
 router = APIRouter()
 
 
-@router.post("/signup", response_model=signup_res_dto.User)
+@router.post("/signup", response_model=user_schemas.User)
 def create_user(user: user_schemas.UserCreate, db: Session = Depends(get_db)):
     return auth_service.create_user(db, user)
 
