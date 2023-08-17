@@ -2,21 +2,20 @@ from datetime import datetime, timedelta
 from typing import Annotated
 
 from fastapi import Depends, HTTPException, status
+from fastapi.responses import JSONResponse
 from fastapi.security import OAuth2PasswordBearer
-
+from jose import JWTError, jwt
 from jwt.exceptions import ExpiredSignatureError
 from passlib.context import CryptContext
 from sqlalchemy.orm import Session
-from jose import JWTError, jwt
+
 from app.core.config import settings
 from app.crud import user_crud
 from app.data_type.token_type import Token
 from app.database.database import get_db
-from app.dto import signup_res_dto
-from app.schemas import user_schemas
 from app.schemas import token_schemas
+from app.schemas import user_schemas
 from app.schemas.user_schemas import User
-from fastapi.responses import JSONResponse
 
 ALGORITHM = settings.HASH_ALGORITHM
 JWT_SECRET_KEY = settings.JWT_SECRET_KEY
@@ -57,7 +56,7 @@ def create_user(db, user: user_schemas.UserCreate):
     if UserInDB:
         raise HTTPException(status_code=400, detail="username already registered")
     user = user_crud.create_user(db=db, user=user)
-    return signup_res_dto.User(id=user.id, username=user.username)
+    return user_schemas.User(id=user.id, username=user.username, disabled=user.disabled, posts=user.posts)
 
 
 def verify_password(plain_password, hashed_password):
