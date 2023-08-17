@@ -12,18 +12,25 @@ router = APIRouter()
 
 
 @router.post("/signup", response_model=user_schemas.User)
-def create_user(user: user_schemas.UserCreate, db: Session = Depends(get_db)):
+def create_user(
+        user: user_schemas.UserCreate,
+        db: Session = Depends(get_db)
+):
     return auth_service.create_user(db, user)
 
 
 @router.post("/login", response_model=token_schemas.Token)
 async def login_for_access_token(
-        form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db: Session = Depends(get_db)
+        form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
+        db: Session = Depends(get_db)
 ):
     return auth_service.login(db, form_data)
 
 
 @router.post("/token", response_model=token_schemas.Token)
-def create_access_token(request: Request, db: Session = Depends(get_db)):
+def create_access_token(
+        request: Request,
+        db: Session = Depends(get_db)
+):
     return auth_service.create_access_token(db, request)
 

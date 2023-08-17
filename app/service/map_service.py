@@ -9,10 +9,10 @@ OPENWEATHERMAP_API_KEY = settings.OPENWEATHERMAP_API_KEY
 OPENWEATHERMAP_LOCATION_URL = settings.OPENWEATHERMAP_LOCATION_URL
 
 
-def get_location_by_city(city, country_code):
+def get_location_by_city(map_data):
 
     params = {
-        "q": f"{city},{country_code}",
+        "q": f"{map_data.city},{map_data.country_code}",
         "appid": OPENWEATHERMAP_API_KEY,
     }
 

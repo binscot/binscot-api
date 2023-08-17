@@ -3,10 +3,10 @@ from typing import Annotated
 
 from fastapi import Depends, HTTPException, status
 from fastapi.responses import JSONResponse
-from fastapi.security import OAuth2PasswordBearer
+
 from jose import JWTError, jwt
 from jwt.exceptions import ExpiredSignatureError
-from passlib.context import CryptContext
+
 from sqlalchemy.orm import Session
 
 from app.core.config import settings
@@ -16,13 +16,11 @@ from app.database.database import get_db
 from app.schemas import token_schemas
 from app.schemas import user_schemas
 from app.schemas.user_schemas import User
+from app.core import consts
 
 ALGORITHM = settings.HASH_ALGORITHM
 JWT_SECRET_KEY = settings.JWT_SECRET_KEY
 JWT_REFRESH_SECRET_KEY = settings.JWT_REFRESH_SECRET_KEY
-
-password_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
 # 1
@@ -60,11 +58,11 @@ def create_user(db, user: user_schemas.UserCreate):
 
 
 def verify_password(plain_password, hashed_password):
-    return password_context.verify(plain_password, hashed_password)
+    return consts.password_context.verify(plain_password, hashed_password)
 
 
 def get_password_hash(password):
-    return password_context.hash(password)
+    return consts.password_context.hash(password)
 
 
 def authenticate_user(db, username: str, password: str):
@@ -88,7 +86,7 @@ def create_jwt_token(data: dict, token_type: Token):
     return encoded_jwt
 
 
-async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)],
+async def get_current_user(token: Annotated[str, Depends(consts.oauth2_scheme)],
                            db: Session = Depends(get_db)):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,

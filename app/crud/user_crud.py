@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from app.models import models
 from app.models.models import User
 from app.schemas.user_schemas import UserInDB, UserCreate
-from app.service.auth_service import password_context
+from app.core import consts
 
 
 def get_user_by_username(db: Session, username: str) -> UserInDB | None:
@@ -23,7 +23,7 @@ def get_users(db: Session, skip: int = 0, limit: int = 100) -> list[Type[UserInD
 def create_user(db: Session, user: UserCreate):
     new_user = User(
         username=user.username,
-        hashed_password=password_context.hash(user.password1)
+        hashed_password=consts.password_context.hash(user.password1)
     )
     db.add(new_user)
     db.commit()
