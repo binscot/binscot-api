@@ -2,7 +2,6 @@ import httpx
 from fastapi import APIRouter, HTTPException
 
 from app.core.config import settings
-from app.schemas import translator_schemas
 
 router = APIRouter()
 
@@ -12,13 +11,10 @@ PAPAGO_URL = settings.PAPAGO_URL
 PAPAGO_DETECT_LANGUAGE_URL = settings.PAPAGO_DETECT_LANGUAGE_URL
 
 
-async def translate_text(translationRequest: translator_schemas.TranslationRequest):
-    text = translationRequest.text
-    source_lang = translationRequest.source_lang
-    target_lang = translationRequest.target_lang
-
-    if not text or not source_lang or not target_lang:
-        raise HTTPException(status_code=400, detail="Text, source_lang, and target_lang are required.")
+async def translate_text(translation_data):
+    text = translation_data.text
+    source_lang = translation_data.source_lang
+    target_lang = translation_data.target_lang
 
     headers = {
         "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
@@ -43,14 +39,14 @@ async def translate_text(translationRequest: translator_schemas.TranslationReque
             raise HTTPException(status_code=response.status_code, detail="Translation failed.")
 
 
-async def detect_language(text):
+async def detect_language(sensing_data):
 
     headers = {
         "X-Naver-Client-Id": PAPAGO_CLIENT_ID,
         "X-Naver-Client-Secret": PAPAGO_CLIENT_SECRET
     }
 
-    params = {"query": text}
+    params = {"query": sensing_data.text}
 
     async with httpx.AsyncClient() as client:
         try:

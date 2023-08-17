@@ -12,8 +12,11 @@ OPENWEATHERMAP_WEATHER_WEEK_URL = settings.OPENWEATHERMAP_WEATHER_WEEK_URL
 OPENWEATHERMAP_WEATHER_TODAY_URL = settings.OPENWEATHERMAP_WEATHER_TODAY_URL
 
 
-def get_weather_week(city: str, country_code: str):
-    data = get_weather_data_json(city, country_code, OPENWEATHERMAP_WEATHER_WEEK_URL)
+def get_weather_week(map_data):
+    data = get_weather_data_json(
+        map_data,
+        OPENWEATHERMAP_WEATHER_WEEK_URL
+    )
 
     result = []
     if data.get("cod") == "200":
@@ -40,8 +43,11 @@ def get_weather_week(city: str, country_code: str):
     return result
 
 
-def get_weather_now(city, country_code):
-    data = get_weather_data_json(city, country_code, OPENWEATHERMAP_WEATHER_TODAY_URL)
+def get_weather_now(map_data):
+    data = get_weather_data_json(
+        map_data,
+        OPENWEATHERMAP_WEATHER_TODAY_URL
+    )
     if data.get("cod") == 200:
         utc_time = datetime.utcfromtimestamp(data.get("dt"))
         kst_time = utc_time + timedelta(hours=9)
@@ -54,9 +60,12 @@ def get_weather_now(city, country_code):
         return transformed_data
 
 
-def get_weather_data_json(city, country_code, url):
+def get_weather_data_json(
+        map_data,
+        url
+):
     params = {
-        "q": f"{city},{country_code}",
+        "q": f"{map_data.city},{map_data.country_code}",
         "appid": OPENWEATHERMAP_API_KEY,
     }
 
