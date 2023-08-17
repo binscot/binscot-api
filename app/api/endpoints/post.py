@@ -24,11 +24,9 @@ def create_post(
 
 @router.get("/", response_model=List[post_schemas.Post])
 def read_posts(
-        skip: int = 0,
-        limit: int = 100,
         db: Session = Depends(get_db)
 ):
-    return post_crud.get_posts(db, skip=skip, limit=limit)
+    return post_crud.get_posts(db)
 
 
 @router.get("/read_post/{post_id}", response_model=post_schemas.Post)

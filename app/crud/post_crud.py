@@ -4,12 +4,12 @@ from app.models import models
 from app.schemas import post_schemas
 
 
-def get_posts(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.Post).offset(skip).limit(limit).all()
+def get_posts(db: Session):
+    return db.query(models.Post).all()
 
 
 def get_post(db: Session, post_id: int):
-    return db.query(models.Post).filter(models.Post.id == post_id).first()
+    return db.query(models.Post).get(post_id)
 
 
 def create_post(db: Session, post: post_schemas.PostCreate, current_user):
