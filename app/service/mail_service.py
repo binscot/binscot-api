@@ -2,11 +2,9 @@ import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
-from fastapi import FastAPI, HTTPException
+from fastapi import HTTPException
 
 from app.core.config import settings
-
-app = FastAPI()
 
 # Gmail SMTP 설정
 SMTP_SERVER = settings.SMTP_SERVER

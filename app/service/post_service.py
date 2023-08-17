@@ -1,8 +1,6 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import HTTPException
 
 from app.crud import post_crud
-
-router = APIRouter()
 
 
 def read_post(db, post_id):

@@ -1,9 +1,7 @@
-from fastapi import APIRouter, HTTPException, status
 import requests
+from fastapi import HTTPException, status
 
 from app.core.config import settings
-
-router = APIRouter()
 
 OPENWEATHERMAP_API_KEY = settings.OPENWEATHERMAP_API_KEY
 OPENWEATHERMAP_LOCATION_URL = settings.OPENWEATHERMAP_LOCATION_URL

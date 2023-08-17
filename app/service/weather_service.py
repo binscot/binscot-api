@@ -1,11 +1,8 @@
 from datetime import datetime, timedelta
 
 import requests
-from fastapi import APIRouter
 
 from app.core.config import settings
-
-router = APIRouter()
 
 OPENWEATHERMAP_API_KEY = settings.OPENWEATHERMAP_API_KEY
 OPENWEATHERMAP_WEATHER_WEEK_URL = settings.OPENWEATHERMAP_WEATHER_WEEK_URL
