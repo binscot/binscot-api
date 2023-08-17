@@ -31,12 +31,7 @@ def create_access_token(db, request):
     user = verify_token(request.cookies.get(Token.REFRESH_TOKEN), Token.get_key(Token.REFRESH_TOKEN),
                         settings.HASH_ALGORITHM, db)
     access_token = create_jwt_token(data={"sub": user.username}, token_type=Token.ACCESS_TOKEN)
-    response = JSONResponse({
-        "access_token": access_token,
-        "token_type": "bearer",
-        "username": user.username
-    })
-    return response
+    return token_schemas.Token(access_token=access_token, token_type="bearer", username=user.username)
 
 
 def login(db, form_data):
