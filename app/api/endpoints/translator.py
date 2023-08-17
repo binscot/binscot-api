@@ -1,22 +1,16 @@
-from fastapi import APIRouter, Query
+from fastapi import APIRouter
 
-from app.core.config import settings
-from app.schemas.translator_schemas import TranslationRequest
+from app.schemas import translator_schemas
 from app.service import translator_service
 
 router = APIRouter()
 
-PAPAGO_CLIENT_ID = settings.NAVER_CLIENT_ID
-PAPAGO_CLIENT_SECRET = settings.NAVER_CLIENT_SECRET
-PAPAGO_URL = settings.PAPAGO_URL
-PAPAGO_DETECT_LANGUAGE_URL = settings.PAPAGO_DETECT_LANGUAGE_URL
+
+@router.post("/translation")
+async def translate_text(translation_data: translator_schemas.TranslationData):
+    return await translator_service.translate_text(translation_data)
 
 
-@router.post("/translatorText")
-async def translate_text(request: TranslationRequest):
-    return await translator_service.translate_text(request)
-
-
-@router.get("/detectLanguage")
-async def detect_language(text: str = Query(..., title="Text to detect language")):
-    return await translator_service.detect_language(text=text)
+@router.get("/sensing")
+async def detect_language(sensing_data: translator_schemas.SensingData):
+    return await translator_service.detect_language(sensing_data)
