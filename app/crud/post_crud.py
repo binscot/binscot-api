@@ -12,8 +12,8 @@ def get_post(db: Session, post_id: int):
     return db.query(models.Post).filter(models.Post.id == post_id).first()
 
 
-def create_post(db: Session, post: post_schemas.PostCreate, user_id: int):
-    db_post = models.Post(**post.dict(), owner_id=user_id)
+def create_post(db: Session, post: post_schemas.PostCreate, current_user):
+    db_post = models.Post(**post.__dict__, owner_id=current_user.id)
     db.add(db_post)
     db.commit()
     db.refresh(db_post)
