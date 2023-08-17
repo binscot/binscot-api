@@ -1,9 +1,7 @@
 import httpx
-from fastapi import APIRouter, HTTPException
+from fastapi import HTTPException
 
 from app.core.config import settings
-
-router = APIRouter()
 
 PAPAGO_CLIENT_ID = settings.NAVER_CLIENT_ID
 PAPAGO_CLIENT_SECRET = settings.NAVER_CLIENT_SECRET
