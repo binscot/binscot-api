@@ -2,6 +2,7 @@ import os
 from os import path
 
 from dotenv import load_dotenv
+from pydantic import EmailStr
 from pydantic_settings import BaseSettings
 
 base_dir = path.dirname(path.dirname(path.dirname(path.abspath(__file__))))
@@ -39,7 +40,7 @@ class Settings(BaseSettings):
     SMTP_PORT: int = os.getenv('SMTP_PORT')
     SMTP_USERNAME: str = os.getenv('SMTP_USERNAME')
     SMTP_PASSWORD: str = os.getenv('SMTP_PASSWORD')
-    OWNER_MAIL: str = os.getenv('OWNER_MAIL')
+    OWNER_MAIL: EmailStr = os.getenv('OWNER_MAIL')
 
     class Config:
         case_sensitive = True

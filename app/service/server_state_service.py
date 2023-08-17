@@ -8,6 +8,7 @@ OWNER_MAIL = settings.OWNER_MAIL
 
 def get_server_state():
     to_email = OWNER_MAIL
+    print(to_email)
     subject = "server state and weather"
 
     try:

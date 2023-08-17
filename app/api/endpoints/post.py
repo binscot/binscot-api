@@ -29,9 +29,10 @@ def read_posts(
     return post_crud.get_posts(db)
 
 
-@router.get("/read_post/{post_id}", response_model=post_schemas.Post)
+@router.get("/read_post", response_model=post_schemas.Post)
 def read_post(
         post_id: int,
         db: Session = Depends(get_db)
 ):
-    return post_service.read_post(db, post_id)
+    print(post_id)
+    return post_service.read_post(db, post_id=post_id)
