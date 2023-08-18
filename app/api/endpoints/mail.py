@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 
-from app.service import mail_service
 from app.schemas import mail_schemas
+from app.service import mail_service
 
 router = APIRouter()
 

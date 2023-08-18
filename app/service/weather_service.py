@@ -98,7 +98,7 @@ def get_weather_now(map_data):
             last_snow_3h = data.get("snow", {}).get("3h")
             last_snow_1h = data.get("snow", {}).get("1h")
 
-            transformed_data = weather_schemas.WeatherNow(
+            return weather_schemas.WeatherNow(
                 kst_time=kst_time,
                 country=country,
                 city=city,
@@ -120,7 +120,6 @@ def get_weather_now(map_data):
                 sunrise=sunrise,
                 sunset=sunset
             )
-            return transformed_data
     except Exception as e:
         return e
 
