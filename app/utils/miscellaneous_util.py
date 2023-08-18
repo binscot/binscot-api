@@ -1,5 +1,8 @@
-import requests
 import re
+from datetime import datetime, timedelta
+
+import requests
+
 from app.core.config import settings
 
 RANDOM_CAT_URL = settings.RANDOM_CAT_URL
@@ -28,3 +31,17 @@ def read_html_file(file_path):
 def multiple_replace(text, replacements):
     pattern = re.compile("|".join(replacements.keys()))
     return pattern.sub(lambda m: replacements[m.group(0)], text)
+
+
+def convert_temperature(kelvin: float):
+    return round(kelvin - 273.15, 2)
+
+
+def convert_unix_time(utc_time):
+    try:
+        utc_time = datetime.utcfromtimestamp(utc_time)
+        kst_time = utc_time + timedelta(hours=9)
+        korea_time_str = kst_time.strftime('%Y-%m-%d %H:%M:%S')
+        return korea_time_str
+    except Exception as e:
+        return f"error: {str(e)}"

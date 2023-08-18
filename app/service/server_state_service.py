@@ -2,19 +2,19 @@ from app.core.config import settings
 from app.schemas import mail_schemas
 from app.service import weather_service, mail_service
 from app.utils import miscellaneous_util
+from app.schemas import map_schemas
 
 OWNER_MAIL = settings.OWNER_MAIL
 
 
 def get_server_state():
     to_email = OWNER_MAIL
-    print(to_email)
     subject = "server state and weather"
-
+    map_data = map_schemas.MapData(city="seoul", country_code="KR")
     try:
         cat_url = miscellaneous_util.get_random_cat_image()
-        weather_seoul = weather_service.get_weather_now(city="seoul", country_code="KR")
-        weather_suwon = weather_service.get_weather_now(city="suwon", country_code="KR")
+        weather_seoul = weather_service.get_weather_now(map_data)
+        weather_suwon = weather_service.get_weather_now(map_data)
         weather_detail_seoul = weather_seoul.get("weather") + " " + weather_seoul.get("weather_description")
         weather_detail_suwon = weather_suwon.get("weather") + " " + weather_suwon.get("weather_description")
 
