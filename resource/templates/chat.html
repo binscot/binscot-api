@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat</title>
+</head>
+<body>
+<h1>Chat</h1>
+<input id="message" type="text" placeholder="Type a message...">
+<button onclick="sendMessage()">Send</button>
+<div id="chat">
+    {% for message in chat_messages %}
+    <p>{{ message }}</p>
+    {% endfor %}
+</div>
+
+
+<script>
+    const messageInput = document.getElementById("message");
+    console.log(messageInput)
+    // const ws = new WebSocket("ws://localhost:8000/ws");
+    const ws = new WebSocket("ws://localhost:8000/ws");
+
+    ws.onmessage = event => {
+        const message = document.createElement("p");
+        message.innerText = event.data;
+        document.getElementById("chat").appendChild(message);
+    };
+
+    function sendMessage() {
+        const message = messageInput.value;
+        if (message) {
+            ws.send(message);
+            messageInput.value = "";
+        }
+    }
+</script>
+</body>
+</html>
