@@ -1,6 +1,14 @@
 from pydantic import BaseModel, field_validator
 
 
+class BaseResponseDTO(BaseModel):
+    status_code: int
+    data: dict
+
+    class Config:
+        validate_assignment = True
+
+
 class MapData(BaseModel):
     city: str
     country_code: str
