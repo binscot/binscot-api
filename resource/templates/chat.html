@@ -1,5 +1,6 @@
+
 <!DOCTYPE html>
-<html>
+<html lang="">
 <head>
     <title>WebSocket Chat</title>
 </head>
@@ -8,6 +9,7 @@
 <div id="chat"></div>
 <input type="text" id="message" placeholder="Type your message">
 <button onclick="sendMessage()">Send</button>
+<button onclick="closeConnection()">Disconnect</button>
 <script>
     const room_id = "room1";  // 방 ID
     let username = prompt("Enter your username:");
@@ -37,6 +39,11 @@
         };
         socket.send(JSON.stringify(messageData));
         input.value = "";
+    }
+
+    function closeConnection() {
+        socket.close();
+        console.log("WebSocket connection closed");
     }
 </script>
 </body>
