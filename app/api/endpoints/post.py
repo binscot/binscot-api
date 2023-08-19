@@ -34,5 +34,4 @@ def read_post(
         post_id: int,
         db: Session = Depends(get_db)
 ):
-    print(post_id)
     return post_service.read_post(db, post_id=post_id)
