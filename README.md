@@ -28,6 +28,7 @@ VCN 을 2개밖에 생성불가
 ## docker
 
 이미지생성
+
 docker build -t [repo]/[tag]:latest . -f DockerFile   
 
 push
@@ -43,29 +44,40 @@ run
 sudo docker run -p 80:80 -e TZ=Asia/Seoul [repo]/[tag]
 
 상태확인
+
 sudo docker ps
 
 종료
+
 sudo docker stop [container]
 
-docker 접속 docker exec -it [container] /bin/bash
+docker 접속 
+
+docker exec -it [container] /bin/bash
 
 이미지확인
+
 sudo docker images -a
 
 이미지삭제
+
 sudo docker rmi [container]
+
 sudo docker rmi -f [container]
 
 레디스 pull
 docker pull redis
 
 레디스 실행
+
 docker run -d --name redis-container -p 6379:6379 -v /redis/redis.conf:/etc/redis/redis.conf redis redis-server /etc/redis/redis.conf --requirepass [REDIS_PASSWORD]
+
 레디스 접속
+
 redis-cli
 
 도커 컨테이너 내무 접속
+
 sudo docker exec -it [container] /bin/bash
 
 
