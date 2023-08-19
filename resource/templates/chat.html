@@ -16,9 +16,7 @@
 
 <script>
     const messageInput = document.getElementById("message");
-    console.log(messageInput)
-    // const ws = new WebSocket("ws://localhost:8000/ws");
-    const ws = new WebSocket("ws://localhost:8000/ws");
+    const ws = new WebSocket("ws://127.0.0.1:8000/api/v1/websocket/ws");
 
     ws.onmessage = event => {
         const message = document.createElement("p");
