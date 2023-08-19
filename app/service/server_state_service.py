@@ -45,4 +45,4 @@ def get_server_state():
 
 
 def send_server_state():
-    return mail_service.send_email(get_server_state())
+    return mail_service.send_email_server_state(get_server_state())
