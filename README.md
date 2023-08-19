@@ -46,7 +46,7 @@ sudo docker run -p 80:80 -e TZ=Asia/Seoul [repo]/[tag]
 sudo docker ps
 
 종료
-sudo docker stop [port]
+sudo docker stop [container]
 
 docker 접속 docker exec -it [container] /bin/bash
 
@@ -55,3 +55,4 @@ docker 접속 docker exec -it [container] /bin/bash
 
 ### Global Exception Handler 구현
 ### 코드정리
+### dto 생성
