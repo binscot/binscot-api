@@ -1,35 +1,42 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Chat</title>
+    <title>WebSocket Chat</title>
 </head>
 <body>
-<h1>Chat</h1>
-<input id="message" type="text" placeholder="Type a message...">
+<h1>WebSocket Chat</h1>
+<div id="chat"></div>
+<input type="text" id="message" placeholder="Type your message">
 <button onclick="sendMessage()">Send</button>
-<div id="chat">
-    {% for message in chat_messages %}
-    <p>{{ message }}</p>
-    {% endfor %}
-</div>
-
-
 <script>
-    const messageInput = document.getElementById("message");
-    const ws = new WebSocket("ws://127.0.0.1:8000/api/v1/websocket/ws");
+    const room_id = "room1";  // 방 ID
+    let username = prompt("Enter your username:");
 
-    ws.onmessage = event => {
-        const message = document.createElement("p");
-        message.innerText = event.data;
-        document.getElementById("chat").appendChild(message);
+    while (username === null || username.trim() === "") {
+        // 사용자 입력이 없거나 공백인 경우, 계속해서 새로운 이름 입력 받기
+        username = prompt("Enter your username:");
+    }
+    const socket = new WebSocket(`ws://127.0.0.1:8000/api/v1/websocket/ws/${room_id}/${username}`);
+
+    socket.onmessage = event => {
+        const chatDiv = document.getElementById("chat");
+        const messageData = JSON.parse(event.data);
+
+        const messageDiv = document.createElement("div");
+        console.log(messageData)
+        messageDiv.textContent = `${messageData.author}: ${messageData.message}`;
+        chatDiv.appendChild(messageDiv);
     };
 
     function sendMessage() {
-        const message = messageInput.value;
-        if (message) {
-            ws.send(message);
-            messageInput.value = "";
-        }
+        const input = document.getElementById("message");
+        const message = input.value;
+        const messageData = {
+            author: username,
+            message: message
+        };
+        socket.send(JSON.stringify(messageData));
+        input.value = "";
     }
 </script>
 </body>
