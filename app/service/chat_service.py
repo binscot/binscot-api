@@ -15,12 +15,12 @@ redis_server = redis.Redis(host=REDIS_SERVER, port=REDIS_PORT, db=REDIS_DB, pass
 manager = websocket_util.ConnectionManager()
 
 
-async def subscribe_chat_room(websocket: WebSocket, room_id: str, username: str):
+async def subscribe_chat_room(websocket: WebSocket, room_name: str, username: str):
 
-    await manager.connect(websocket, room_id, username)
+    await manager.connect(websocket, room_name, username)
 
     try:
-        messages = redis_server.lrange(f"messages:{room_id}", 0, -1)
+        messages = redis_server.lrange(f"messages:{room_name}", 0, -1)
         for message in messages:
             await manager.broadcast(miscellaneous_util.byte_to_json_str(message))
         while True:
@@ -30,7 +30,7 @@ async def subscribe_chat_room(websocket: WebSocket, room_id: str, username: str)
                 "message": json.loads(message)["message"]
             }
             await manager.broadcast(json.dumps(message_data))
-            redis_server.lpush(f"messages:{room_id}", json.dumps(message_data))
+            redis_server.lpush(f"messages:{room_name}", json.dumps(message_data))
     except WebSocketDisconnect:
         manager.disconnect(websocket)
         print(f"Client {username} disconnected")
