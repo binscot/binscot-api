@@ -28,10 +28,11 @@ class Post(Base):
 
 
 class ChatRoom(Base):
-    __tablename__ = "ChatRooms"
+    __tablename__ = "chat_rooms"
 
     id = Column(Integer, primary_key=True, index=True)
     room_name = Column(String, index=True)
+    lock = Column(Boolean)
     hashed_password = Column(String)
     limit_number_rooms = Column(Integer)
     user_in_room = Column(ARRAY(String))

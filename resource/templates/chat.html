@@ -61,7 +61,7 @@
     let username = prompt("Enter your username:");
     let room_id = prompt("Enter your room_id:");
 
-    const socket = new WebSocket(`ws://127.0.0.1:8000/api/v1/websocket/ws/${room_id}/${username}`);
+    const socket = new WebSocket(`ws://127.0.0.1:8000/api/v1/chat/ws/${room_id}/${username}`);
     socket.onmessage = event => {
         const chatDiv = document.getElementById("chat");
         const messageData = JSON.parse(event.data);
