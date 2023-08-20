@@ -16,6 +16,7 @@ manager = websocket_util.ConnectionManager()
 
 
 async def websocket_endpoint(websocket: WebSocket, room_id: str, username: str):
+
     await manager.connect(websocket, room_id, username)
 
     try:

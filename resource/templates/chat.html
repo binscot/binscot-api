@@ -1,3 +1,51 @@
+{#<!DOCTYPE html>#}
+{#<html lang="">#}
+{#<head>#}
+{#    <title>WebSocket Chat</title>#}
+{#</head>#}
+{#<body>#}
+{#<h1>WebSocket Chat</h1>#}
+{#<div id="chat"></div>#}
+{#<input type="text" id="message" placeholder="Type your message">#}
+{#<button onclick="sendMessage()">Send</button>#}
+{#<button onclick="closeConnection()">Disconnect</button>#}
+{#<script>#}
+{#    const room_id = "room1";  // 방 ID#}
+{#    let username = prompt("Enter your username:");#}
+{##}
+{#    while (username === null || username.trim() === "") {#}
+{#        // 사용자 입력이 없거나 공백인 경우, 계속해서 새로운 이름 입력 받기#}
+{#        username = prompt("Enter your username:");#}
+{#    }#}
+{#    const socket = new WebSocket(`ws://127.0.0.1:8000/api/v1/websocket/ws/${room_id}/${username}`);#}
+{##}
+{#    socket.onmessage = event => {#}
+{#        const chatDiv = document.getElementById("chat");#}
+{#        const messageData = JSON.parse(event.data);#}
+{#        const messageDiv = document.createElement("div");#}
+{#        messageDiv.textContent = `${messageData.author}: ${messageData.message}`;#}
+{#        chatDiv.appendChild(messageDiv);#}
+{#    };#}
+{##}
+{#    function sendMessage() {#}
+{#        const input = document.getElementById("message");#}
+{#        const message = input.value;#}
+{#        const messageData = {#}
+{#            author: username,#}
+{#            message: message#}
+{#        };#}
+{#        socket.send(JSON.stringify(messageData));#}
+{#        input.value = "";#}
+{#    }#}
+{##}
+{#    function closeConnection() {#}
+{#        socket.close();#}
+{#        console.log("WebSocket connection closed");#}
+{#    }#}
+{#</script>#}
+{#</body>#}
+{#</html>#}
+
 <!DOCTYPE html>
 <html lang="">
 <head>
@@ -10,32 +58,10 @@
 <button onclick="sendMessage()">Send</button>
 <button onclick="closeConnection()">Disconnect</button>
 <script>
-    const room_id = "room1";  // 방 ID
     let username = prompt("Enter your username:");
+    let room_id = prompt("Enter your room_id:");
 
-    while (username === null || username.trim() === "") {
-        // 사용자 입력이 없거나 공백인 경우, 계속해서 새로운 이름 입력 받기
-        username = prompt("Enter your username:");
-    }
     const socket = new WebSocket(`ws://127.0.0.1:8000/api/v1/websocket/ws/${room_id}/${username}`);
-    socket.onopen = () => {
-        // 클라이언트가 방에 들어오면 이전 메시지를 이미 받은 상태이므로, 따로 요청하지 않고 바로 표시합니다.
-        displayPreviousMessages();
-    };
-
-    function displayPreviousMessages() {
-        const chatDiv = document.getElementById("chat");
-
-        // 이미 클라이언트가 접속할 때 서버에서 보내준 이전 메시지를 가지고 있다고 가정합니다.
-        const previousMessages = []; // 서버에서 받은 이전 메시지 배열
-
-        for (const messageData of previousMessages) {
-            const messageDiv = document.createElement("div");
-            messageDiv.textContent = `${messageData.author}: ${messageData.message}`;
-            chatDiv.appendChild(messageDiv);
-        }
-    }
-
     socket.onmessage = event => {
         const chatDiv = document.getElementById("chat");
         const messageData = JSON.parse(event.data);
