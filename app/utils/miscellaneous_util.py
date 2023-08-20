@@ -1,4 +1,6 @@
 import re
+import json
+
 from datetime import datetime, timedelta
 
 import requests
@@ -17,6 +19,16 @@ def get_random_cat_image():
         return cat_image_url
     else:
         return None
+
+
+def byte_to_json_str(byte_str):
+    try:
+        decoded_string = byte_str.decode("utf-8")
+        json_data = json.loads(decoded_string)
+        return json.dumps(json_data)
+    except Exception as e:
+        print('byte_to_string error')
+        return e
 
 
 def read_html_file(file_path):
