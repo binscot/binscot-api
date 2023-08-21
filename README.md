@@ -80,10 +80,14 @@ redis-cli
 
 sudo docker exec -it [container] /bin/bash
 
-
+##chat room 로직 변경
+postgreSQL db 에 room 생성 -> 소켓 접속 유저입장 (postgreSQL db room update) -> 레디스연동
 
 ## TODO
 
 ### Global Exception Handler 구현
 ### 코드정리
 ### dto 생성
+
+
+
