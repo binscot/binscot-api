@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from pydantic import BaseModel
 
@@ -6,7 +6,7 @@ from pydantic import BaseModel
 class ChatRoomBase(BaseModel):
     room_name: str
     lock: bool
-    hashed_password: str
+    hashed_password: Optional[str]
     limit_number_rooms: int
     user_in_room: List[str]
 

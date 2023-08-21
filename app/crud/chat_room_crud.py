@@ -21,3 +21,7 @@ def add_user_to_user_in_room(db, chat_room, new_username: str):
     chat_room.user_in_room.append(new_username)
     db.commit()
     return chat_room
+
+
+def get_room_by_room_name(db: Session, chat_room_name: str):
+    return db.query(models.ChatRoom).filter(models.ChatRoom.room_name == chat_room_name).first()
