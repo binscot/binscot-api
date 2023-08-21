@@ -35,4 +35,4 @@ class ChatRoom(Base):
     lock = Column(Boolean)
     hashed_password = Column(String)
     limit_number_rooms = Column(Integer)
-    user_in_room = Column(ARRAY(String))
+    user_in_room = Column(String)

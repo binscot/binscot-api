@@ -44,3 +44,13 @@ def create_chat_room(db, chat_room):
     if chat_room_in_db:
         raise HTTPException(status_code=400, detail="room_name already registered")
     return chat_room_crud.create_chat_room(db, chat_room)
+
+
+def add_user_chat_room(db, room_id, user_name: str):
+    user_name = user_name.strip()
+    chat_room_in_db = chat_room_crud.get_room_by_room_id(db, room_id)
+    if not chat_room_in_db:
+        raise HTTPException(status_code=400, detail="Room not found")
+    if '/' + user_name + '/' in chat_room_in_db.user_in_room:
+        raise HTTPException(status_code=400, detail="already username in the Room")
+    return chat_room_crud.add_user_to_user_in_room(db, chat_room_in_db, user_name)
