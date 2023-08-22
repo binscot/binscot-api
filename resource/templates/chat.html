@@ -2,11 +2,17 @@
 <html lang="">
 <head>
     <title>WebSocket Chat</title>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const input = document.getElementById("message");
+        input.focus();
+    });
+</script>
 </head>
 <body>
 <h1>WebSocket Chat</h1>
 <div id="chat"></div>
-<input type="text" id="message" placeholder="Type your message">
+<label for="message"></label><input type="text" id="message" placeholder="Type your message" onkeyup="handleKeyPress(event)" >
 <button onclick="sendMessage()">Send</button>
 <button onclick="closeConnection()">Disconnect</button>
 <script>
@@ -66,6 +72,13 @@
     function closeConnection() {
         window.socket.close();
         console.log("WebSocket connection closed");
+    }
+
+    function handleKeyPress(event) {
+        if (event.key === "Enter") {
+            event.preventDefault(); // 기본 동작 중단
+            sendMessage();
+        }
     }
 </script>
 </body>
