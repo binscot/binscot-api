@@ -5,7 +5,7 @@ class ConnectionManager:
     def __init__(self):
         self.active_connections = []
 
-    async def connect(self, websocket: WebSocket, room_id: str, username: str):
+    async def connect(self, websocket: WebSocket, room_id: int, username: str):
         await websocket.accept()
         self.active_connections.append((websocket, room_id, username))
 

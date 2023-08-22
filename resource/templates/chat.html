@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="">
 <head>
@@ -12,16 +11,46 @@
 <button onclick="closeConnection()">Disconnect</button>
 <script>
     let username = prompt("Enter your username:");
-    let room_name = prompt("Enter your room_name:");
+    let room_name = "ㅁㅇ모여라";
 
-    const socket = new WebSocket(`ws://127.0.0.1:8000/api/v1/chat/ws/${room_name}/${username}`);
-    socket.onmessage = event => {
-        const chatDiv = document.getElementById("chat");
-        const messageData = JSON.parse(event.data);
-        const messageDiv = document.createElement("div");
-        messageDiv.textContent = `${messageData.author}: ${messageData.message}`;
-        chatDiv.appendChild(messageDiv);
-    };
+    if(username !== null) {
+        const createRoomData = {
+            room_name: room_name,
+            lock: true,
+            hashed_password: null,
+            limit_number_rooms: 3,
+            user_in_room: null
+        };
+
+        fetch("http://127.0.0.1:8000/api/v1/chat/create", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(createRoomData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log("Room created:", data);
+            initializeWebSocket(data.id);
+        })
+        .catch(error => {
+            console.error("Error creating room:", error);
+        });
+    }
+
+    function initializeWebSocket(roomId) {
+        const socket = new WebSocket(`ws://127.0.0.1:8000/api/v1/chat/ws/${roomId}/${username}`);
+        socket.onmessage = event => {
+            const chatDiv = document.getElementById("chat");
+            const messageData = JSON.parse(event.data);
+            const messageDiv = document.createElement("div");
+            messageDiv.textContent = `${messageData.author}: ${messageData.message}`;
+            chatDiv.appendChild(messageDiv);
+        };
+        
+        window.socket = socket; // 소켓 객체를 전역 변수로 설정하여 다른 함수에서도 사용 가능하도록 합니다.
+    }
 
     function sendMessage() {
         const input = document.getElementById("message");
@@ -30,12 +59,12 @@
             author: username,
             message: message
         };
-        socket.send(JSON.stringify(messageData));
+        window.socket.send(JSON.stringify(messageData));
         input.value = "";
     }
 
     function closeConnection() {
-        socket.close();
+        window.socket.close();
         console.log("WebSocket connection closed");
     }
 </script>

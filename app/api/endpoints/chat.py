@@ -10,9 +10,9 @@ from app.service import chat_service
 router = APIRouter()
 
 
-@router.websocket("/ws/{room_name}/{username}")
-async def subscribe_chat_room(websocket: WebSocket, room_name: str, username: str):
-    await chat_service.subscribe_chat_room(websocket, room_name, username)
+@router.websocket("/ws/{room_id}/{username}")
+async def subscribe_chat_room(websocket: WebSocket, room_id: int, username: str, db: Session = Depends(get_db)):
+    await chat_service.subscribe_chat_room(db, websocket, room_id, username)
 
 
 @router.get("/room")
