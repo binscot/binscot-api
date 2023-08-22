@@ -25,11 +25,11 @@ async def client(chat_room: chat_schemas.ChatRoomCreate, db: Session = Depends(g
     return chat_service.create_chat_room(db, chat_room)
 
 
-@router.put("/add_user/{room_id}/{user_name}")
-def add_user_to_room(room_id: int, user_name: str, db: Session = Depends(get_db)):
-    return chat_service.add_user_to_room(db, room_id, user_name)
+@router.put("/add_user/{room_id}/{username}")
+def add_user_to_room(room_id: int, username: str, db: Session = Depends(get_db)):
+    return chat_service.add_user_to_room(db, room_id, username)
 
 
-@router.delete("/remove_user/{room_id}/{user_name}")
-def remove_user_from_room(room_id: int, user_name: str, db: Session = Depends(get_db)):
-    return chat_service.remove_user_from_room(db, room_id, user_name)
+@router.delete("/remove_user/{room_id}/{username}")
+def remove_user_from_room(room_id: int, username: str, db: Session = Depends(get_db)):
+    return chat_service.remove_user_from_room(db, room_id, username)
