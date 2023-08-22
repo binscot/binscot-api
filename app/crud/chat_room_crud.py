@@ -35,3 +35,11 @@ def get_room_by_room_name(db: Session, chat_room_name: str):
 
 def get_room_by_room_id(db: Session, chat_room_id: int) -> chat_schemas.ChatRoom | None:
     return db.query(models.ChatRoom).filter(models.ChatRoom.id == chat_room_id).first()
+
+
+def remove_user_from_user_in_room(db, chat_room_in_db, user_name):
+    chat_room_in_db.user_in_room = chat_room_in_db.user_in_room.replace(str('/' + user_name + '/'), "")
+    db.commit()
+    db.refresh(chat_room_in_db)
+    db.close()
+    return chat_room_in_db
