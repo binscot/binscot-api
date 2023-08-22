@@ -35,10 +35,13 @@ async def subscribe_chat_room(db, websocket: WebSocket, room_id: int, username: 
     except WebSocketDisconnect:
         manager.disconnect(websocket)
         print(f"Client {username} disconnected")
+        remove_user_from_room(db, room_id, username)
         pass
     except Exception as e:
-        print(f"An error occurred: {e}")
         manager.disconnect(websocket)
+        print(f"An error occurred: {e}")
+        remove_user_from_room(db, room_id, username)
+        pass
 
 
 def create_chat_room(db, chat_room):
