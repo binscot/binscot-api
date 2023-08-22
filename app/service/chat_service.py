@@ -69,3 +69,7 @@ def remove_user_from_room(db, room_id, username: str):
         return chat_room_crud.remove_user_from_user_in_room(db, chat_room_in_db, username)
     else:
         raise HTTPException(status_code=400, detail="user is not in the room")
+
+
+def get_chat_rooms(db):
+    return chat_room_crud.get_chat_rooms(db)

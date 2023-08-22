@@ -1,3 +1,5 @@
+from typing import Type
+
 from sqlalchemy.orm import Session
 
 from app.models import models
@@ -43,3 +45,7 @@ def remove_user_from_user_in_room(db, chat_room_in_db, username):
     db.refresh(chat_room_in_db)
     db.close()
     return chat_room_in_db
+
+
+def get_chat_rooms(db: Session) -> list[Type[chat_schemas.ChatRoom]]:
+    return db.query(models.ChatRoom).all()

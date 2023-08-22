@@ -1,3 +1,5 @@
+from typing import List
+
 from fastapi import APIRouter, Depends
 from fastapi import Request, WebSocket
 from sqlalchemy.orm import Session
@@ -33,3 +35,9 @@ def add_user_to_room(room_id: int, username: str, db: Session = Depends(get_db))
 @router.delete("/remove_user/{room_id}/{username}")
 def remove_user_from_room(room_id: int, username: str, db: Session = Depends(get_db)):
     return chat_service.remove_user_from_room(db, room_id, username)
+
+
+@router.get("/list", response_model=List[chat_schemas.ChatRoom])
+def read_chat_rooms( db: Session = Depends(get_db)):
+    return chat_service.get_chat_rooms(db)
+
