@@ -43,132 +43,143 @@
 <div id="chat"></div>
 <label for="message"></label><input type="text" id="message" placeholder="Type your message"
                                     onkeyup="handleKeyPress(event)">
+
+
 <button onclick="sendMessage()">Send</button>
+<button onclick="askForUsernameAndRoomName()">askForUsernameAndRoomName</button>
 <button onclick="closeConnection()">Disconnect</button>
 <button onclick="fetchRoomDataAndDisplayModal()">Show Room List</button>
 <script>
-    let username = prompt("Enter your username:");
-    let room_name = prompt("Enter your roomname:");
+     let modal; // 전역 변수로 modal을 선언합니다.
+let username; // 전역 변수로 username을 선언합니다.
+let room_name; // 전역 변수로 room_name을 선언합니다.
 
-    if (username !== null) {
-        const createRoomData = {
-            room_name: room_name,
-            lock: true,
-            hashed_password: null,
-            limit_number_rooms: 3,
-            user_in_room: null
-        };
+function askForUsernameAndRoomName() {
+    username = prompt("Enter your username:");
+    room_name = prompt("Enter your roomname:");
 
-        fetch("http://127.0.0.1:8000/api/v1/chat/create", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(createRoomData)
+    if (username && room_name) {
+        createRoomAndInitializeWebSocket();
+    }
+}
+
+function createRoomAndInitializeWebSocket() {
+    const createRoomData = {
+        room_name: room_name,
+        lock: true,
+        hashed_password: null,
+        limit_number_rooms: 3,
+        user_in_room: null
+    };
+
+    fetch("http://127.0.0.1:8000/api/v1/chat/create", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(createRoomData)
+    })
+        .then(response => response.json())
+        .then(data => {
+            console.log("Room created:", data);
+            initializeWebSocket(data.id);
         })
-            .then(response => response.json())
-            .then(data => {
-                console.log("Room created:", data);
-                initializeWebSocket(data.id);
-            })
-            .catch(error => {
-                console.error("Error creating room:", error);
-            });
-    }
+        .catch(error => {
+            console.error("Error creating room:", error);
+        });
+}
 
-    function initializeWebSocket(roomId) {
-        const socket = new WebSocket(`ws://127.0.0.1:8000/api/v1/chat/ws/${roomId}/${username}`);
-        socket.onmessage = event => {
-            const chatDiv = document.getElementById("chat");
-            const messageData = JSON.parse(event.data);
-            const messageDiv = document.createElement("div");
-            messageDiv.textContent = `${messageData.author}: ${messageData.message}`;
-            chatDiv.appendChild(messageDiv);
-        };
+function initializeWebSocket(roomId) {
+    const socket = new WebSocket(`ws://127.0.0.1:8000/api/v1/chat/ws/${roomId}/${username}`);
+    socket.onmessage = event => {
+        const chatDiv = document.getElementById("chat");
+        const messageData = JSON.parse(event.data);
+        const messageDiv = document.createElement("div");
+        messageDiv.textContent = `${messageData.author}: ${messageData.message}`;
+        chatDiv.appendChild(messageDiv);
+    };
 
-        window.socket = socket; // 소켓 객체를 전역 변수로 설정하여 다른 함수에서도 사용 가능하도록 합니다.
-    }
+    window.socket = socket; // 소켓 객체를 전역 변수로 설정하여 다른 함수에서도 사용 가능하도록 합니다.
+}
 
-    function sendMessage() {
-        const input = document.getElementById("message");
-        const message = input.value;
-        const messageData = {
-            author: username,
-            message: message
-        };
-        window.socket.send(JSON.stringify(messageData));
-        input.value = "";
-    }
+function sendMessage() {
+    const input = document.getElementById("message");
+    const message = input.value;
+    const messageData = {
+        author: username,
+        message: message
+    };
+    window.socket.send(JSON.stringify(messageData));
+    input.value = "";
+}
 
-    function closeConnection() {
-        window.socket.close();
-    }
+function closeConnection() {
+    window.socket.close();
+}
 
-    function handleKeyPress(event) {
+function handleKeyPress(event) {
     if (event.key === "Enter" && !event.shiftKey) {
         event.preventDefault(); // 기본 동작 중단
         sendMessage();
     }
 }
 
-    function hideModal() {
-        const modal = document.querySelector(".modal");
-        modal.style.display = "none";
+function hideModal() {
+    const modal = document.querySelector(".modal");
+    modal.style.display = "none";
+}
+
+function fetchRoomDataAndDisplayModal() {
+    if (!modal) {
+        modal = document.createElement("div");
+        modal.classList.add("modal");
+        document.body.appendChild(modal);
     }
 
-    let modal; // 전역 변수로 modal을 선언합니다.
+    fetch("http://127.0.0.1:8000/api/v1/chat/list")
+        .then(response => response.json())
+        .then(data => {
+            const modalContent = document.createElement("div");
+            modalContent.classList.add("modal-content");
 
-    function fetchRoomDataAndDisplayModal() {
-        if (!modal) {
-            modal = document.createElement("div");
-            modal.classList.add("modal");
-            document.body.appendChild(modal);
-        }
+            data.forEach(room => {
+                const roomInfo = document.createElement("div");
+                roomInfo.classList.add("room-info");
 
-        fetch("http://127.0.0.1:8000/api/v1/chat/list")
-            .then(response => response.json())
-            .then(data => {
-                const modalContent = document.createElement("div");
-                modalContent.classList.add("modal-content");
+                const roomName = document.createElement("p");
+                roomName.textContent = `방 이름: ${room.room_name}`;
+                roomInfo.appendChild(roomName);
 
-                data.forEach(room => {
-                    const roomInfo = document.createElement("div");
-                    roomInfo.classList.add("room-info");
+                const roomId = document.createElement("p");
+                roomId.textContent = `방 ID: ${room.id}`;
+                roomInfo.appendChild(roomId);
 
-                    const roomName = document.createElement("p");
-                    roomName.textContent = `방 이름: ${room.room_name}`;
-                    roomInfo.appendChild(roomName);
+                const roomLimit = document.createElement("p");
+                roomLimit.textContent = `인원 제한: ${room.limit_number_rooms}`;
+                roomInfo.appendChild(roomLimit);
 
-                    const roomId = document.createElement("p");
-                    roomId.textContent = `방 ID: ${room.id}`;
-                    roomInfo.appendChild(roomId);
-
-                    const roomLimit = document.createElement("p");
-                    roomLimit.textContent = `인원 제한: ${room.limit_number_rooms}`;
-                    roomInfo.appendChild(roomLimit);
-
-                    modalContent.appendChild(roomInfo);
-                });
-
-                // 이전 콘텐츠를 제거합니다.
-                while (modal.firstChild) {
-                    modal.removeChild(modal.firstChild);
-                }
-
-                modal.appendChild(modalContent);
-
-                const closeButton = document.createElement("button");
-                closeButton.textContent = "닫기";
-                closeButton.addEventListener("click", hideModal);
-
-                modalContent.appendChild(closeButton);
-
-                modal.style.display = "block";
-            })
-            .catch(error => {
-                console.error("방 정보 가져오기 오류:", error);
+                modalContent.appendChild(roomInfo);
             });
-    }
+
+            // 이전 콘텐츠를 제거합니다.
+            while (modal.firstChild) {
+                modal.removeChild(modal.firstChild);
+            }
+
+            modal.appendChild(modalContent);
+
+            const closeButton = document.createElement("button");
+            closeButton.textContent = "닫기";
+            closeButton.addEventListener("click", hideModal);
+
+            modalContent.appendChild(closeButton);
+
+            modal.style.display = "block";
+        })
+        .catch(error => {
+            console.error("방 정보 가져오기 오류:", error);
+        });
+}
 </script>
 </body>
 </html>
