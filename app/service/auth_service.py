@@ -1,71 +1,86 @@
 from datetime import datetime, timedelta
 from typing import Annotated
 
-from fastapi import Depends, HTTPException, status, Response
-from fastapi.responses import JSONResponse
-from app.dto import base_response_dto, map_response
+from fastapi import Depends, HTTPException, status
 from jose import JWTError, jwt
 from jwt.exceptions import ExpiredSignatureError
-
 from sqlalchemy.orm import Session
 
+from app.core import consts
 from app.core.config import settings
 from app.crud import user_crud
-from app.data_type.token_type import Token
+from app.data_type.token_type import TokenType
 from app.database.database import get_db
-from app.schemas import token_schemas
-from app.schemas import user_schemas
+from app.dto.base_response_dto import BaseResponseDTO
+from app.schemas.token_schemas import Token, TokenData
 from app.schemas.user_schemas import User
-from app.core import consts
 
 ALGORITHM = settings.HASH_ALGORITHM
-JWT_SECRET_KEY = settings.JWT_SECRET_KEY
-JWT_REFRESH_SECRET_KEY = settings.JWT_REFRESH_SECRET_KEY
 
 
 # 1
 def create_access_token(db, request):
-    user = verify_token(request.cookies.get(Token.REFRESH_TOKEN), Token.get_key(Token.REFRESH_TOKEN),
-                        settings.HASH_ALGORITHM, db)
-    access_token = create_jwt_token(data={"sub": user.username}, token_type=Token.ACCESS_TOKEN)
-    return token_schemas.Token(access_token=access_token, token_type="bearer", username=user.username)
+    refresh_token = request.cookies.get(TokenType.REFRESH_TOKEN)
+    if refresh_token is None:
+        return BaseResponseDTO(
+            status_code=401,
+            data=None,
+            detail='refresh_token is None'
+        )
+    user = verify_token(
+        refresh_token,
+        TokenType.get_key(TokenType.REFRESH_TOKEN),
+        settings.HASH_ALGORITHM, db
+    )
+    access_token = create_jwt_token(data={"sub": user.username}, token_type=TokenType.ACCESS_TOKEN)
+    response_data = Token(access_token=access_token, token_type="bearer", username=user.username)
+    return BaseResponseDTO(
+        status_code=200,
+        data=response_data.__dict__,
+        detail='success'
+    )
 
 
 def login(db, form_data, response):
     user = authenticate_user(db, form_data.username, form_data.password)
     if not user:
-        return base_response_dto.BaseResponseDTO(
+        return BaseResponseDTO(
             status_code=401,
             data=None,
             detail='Incorrect username or password'
         )
-    access_token = create_jwt_token(data={"sub": user.username}, token_type=Token.ACCESS_TOKEN)
-    refresh_token = create_jwt_token(data={"sub": user.username}, token_type=Token.REFRESH_TOKEN)
-    response_data = token_schemas.Token(access_token=access_token, token_type="bearer", username=user.username)
-    response.set_cookie(key="refresh_token", value=refresh_token, httponly=True)
-    return base_response_dto.BaseResponseDTO(
+    response_data = Token(
+        access_token=create_jwt_token(data={"sub": user.username}, token_type=TokenType.ACCESS_TOKEN),
+        token_type="bearer",
+        username=user.username
+    )
+    response.set_cookie(
+        key="refresh_token",
+        value=create_jwt_token(data={"sub": user.username}, token_type=TokenType.REFRESH_TOKEN), httponly=True)
+    return BaseResponseDTO(
         status_code=200,
         data=response_data.__dict__,
         detail='success'
     )
 
 
-def create_user(db, user: user_schemas.UserCreate):
+def create_user(db, user):
     UserInDB = user_crud.get_user_by_username(db, username=user.username)
     if UserInDB:
         print(12)
-        return base_response_dto.BaseResponseDTO(
+        return BaseResponseDTO(
             status_code=400,
             data=None,
             detail='username already registered'
         )
     user = user_crud.create_user(db=db, user=user)
-    response_data = user_schemas.User(id=user.id, username=user.username, disabled=user.disabled, posts=user.posts)
-    return base_response_dto.BaseResponseDTO(
+    response_data = User(id=user.id, username=user.username, disabled=user.disabled, posts=user.posts)
+    return BaseResponseDTO(
         status_code=200,
         data=response_data.__dict__,
         detail='success'
     )
+
 
 def verify_password(plain_password, hashed_password):
     return consts.password_context.verify(plain_password, hashed_password)
@@ -84,15 +99,15 @@ def authenticate_user(db, username: str, password: str):
     return user
 
 
-def create_jwt_token(data: dict, token_type: Token):
+def create_jwt_token(data: dict, token_type: TokenType):
     if token_type is None:
         raise HTTPException(status_code=500, detail="token_type is None")
     else:
-        expire = datetime.utcnow() + timedelta(minutes=Token.get_expire_minutes(token_type))
+        expire = datetime.utcnow() + timedelta(minutes=TokenType.get_expire_minutes(token_type))
     to_encode = data.copy()
 
     to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, Token.get_key(token_type), algorithm=ALGORITHM)
+    encoded_jwt = jwt.encode(to_encode, TokenType.get_key(token_type), algorithm=ALGORITHM)
     return encoded_jwt
 
 
@@ -104,11 +119,11 @@ async def get_current_user(token: Annotated[str, Depends(consts.oauth2_scheme)],
         headers={"WWW-Authenticate": "Bearer"},
     )
     try:
-        payload = jwt.decode(token, Token.get_key(Token.ACCESS_TOKEN), algorithms=[ALGORITHM])
+        payload = jwt.decode(token, TokenType.get_key(TokenType.ACCESS_TOKEN), algorithms=[ALGORITHM])
         username: str = payload.get("sub")
         if username is None:
             raise credentials_exception
-        token_data = token_schemas.TokenData(username=username)
+        token_data = TokenData(username=username)
     except JWTError:
         raise credentials_exception
     user = user_crud.get_user_by_username(db, username=token_data.username)
