@@ -1,9 +1,9 @@
 from datetime import datetime, timedelta
 from typing import Annotated
 
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, status, Response
 from fastapi.responses import JSONResponse
-
+from app.dto import base_response_dto, map_response
 from jose import JWTError, jwt
 from jwt.exceptions import ExpiredSignatureError
 
@@ -31,31 +31,41 @@ def create_access_token(db, request):
     return token_schemas.Token(access_token=access_token, token_type="bearer", username=user.username)
 
 
-def login(db, form_data):
+def login(db, form_data, response):
     user = authenticate_user(db, form_data.username, form_data.password)
     if not user:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password",
-            headers={"WWW-Authenticate": "Bearer"},
+        return base_response_dto.BaseResponseDTO(
+            status_code=401,
+            data=None,
+            detail='Incorrect username or password'
         )
-
     access_token = create_jwt_token(data={"sub": user.username}, token_type=Token.ACCESS_TOKEN)
     refresh_token = create_jwt_token(data={"sub": user.username}, token_type=Token.REFRESH_TOKEN)
-
-    response = JSONResponse(
-        content=token_schemas.Token(access_token=access_token, token_type="bearer", username=user.username).__dict__)
+    response_data = token_schemas.Token(access_token=access_token, token_type="bearer", username=user.username)
     response.set_cookie(key="refresh_token", value=refresh_token, httponly=True)
-    return response
+    return base_response_dto.BaseResponseDTO(
+        status_code=200,
+        data=response_data.__dict__,
+        detail='success'
+    )
 
 
 def create_user(db, user: user_schemas.UserCreate):
     UserInDB = user_crud.get_user_by_username(db, username=user.username)
     if UserInDB:
-        raise HTTPException(status_code=400, detail="username already registered")
+        print(12)
+        return base_response_dto.BaseResponseDTO(
+            status_code=400,
+            data=None,
+            detail='username already registered'
+        )
     user = user_crud.create_user(db=db, user=user)
-    return user_schemas.User(id=user.id, username=user.username, disabled=user.disabled, posts=user.posts)
-
+    response_data = user_schemas.User(id=user.id, username=user.username, disabled=user.disabled, posts=user.posts)
+    return base_response_dto.BaseResponseDTO(
+        status_code=200,
+        data=response_data.__dict__,
+        detail='success'
+    )
 
 def verify_password(plain_password, hashed_password):
     return consts.password_context.verify(plain_password, hashed_password)

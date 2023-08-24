@@ -17,7 +17,7 @@ def get_location_by_city(map_data):
 
     if not data:
         return base_response_dto.BaseResponseDTO(
-            status_code=200,
+            status_code=400,
             data=None,
             detail='나라와 도시를 정확히 입력해주세요'
         )
