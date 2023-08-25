@@ -41,17 +41,17 @@
 <body>
 <h1>WebSocket Chat</h1>
 <div id="chat"></div>
-<label for="message"></label><input type="text" id="message" placeholder="Type your message"
-                                    onkeyup="handleKeyPress(event)" >
+<label for="message"></label>
+<input type="text" id="message" placeholder="Type your message" onkeyup="handleKeyPress(event)">
 <button onclick="sendMessage()">Send</button>
 <button onclick="askForUsernameAndRoomName()">askForUsernameAndRoomName</button>
 <button onclick="closeConnection()">Disconnect</button>
 <button onclick="fetchRoomDataAndDisplayModal()">Show Room List</button>
 <button onclick="createRoomAndInitializeWebSocket()">createRoomAndInitializeWebSocket</button>
 <script>
-    let modal; // 전역 변수로 modal을 선언합니다.
-    let username; // 전역 변수로 username을 선언합니다.
-    let room_name; // 전역 변수로 room_name을 선언합니다.
+    let modal;
+    let username;
+    let room_name;
 
     function askForUsernameAndRoomName() {
         username = prompt("Enter your username:");
@@ -61,7 +61,7 @@
     function createRoomAndInitializeWebSocket() {
         if (!username && !room_name) {
             console.log('11')
-           askForUsernameAndRoomName()
+            askForUsernameAndRoomName()
         }
         const createRoomData = {
             room_name: room_name,
@@ -160,7 +160,7 @@
                     modalContent.appendChild(roomInfo);
                 });
 
-                // 이전 콘텐츠를 제거합니다.
+                // 이전 콘텐츠를 제거
                 while (modal.firstChild) {
                     modal.removeChild(modal.firstChild);
                 }
