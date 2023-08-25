@@ -7,7 +7,5 @@ router = APIRouter()
 
 
 @router.post("/send")
-async def send_email(
-        email_data: mail_schemas.EmailData
-):
+async def send_email(email_data: mail_schemas.EmailData):
     return mail_service.send_email(email_data)
