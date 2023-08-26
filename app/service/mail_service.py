@@ -1,9 +1,10 @@
+import json
 import smtplib
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
+from email.message import EmailMessage
 
 from fastapi import HTTPException
 
+from app.core import consts
 from app.core.config import settings
 
 # Gmail SMTP 설정
@@ -13,25 +14,45 @@ SMTP_USERNAME = settings.SMTP_USERNAME
 SMTP_PASSWORD = settings.SMTP_PASSWORD
 
 
-def send_email(email_data):
+def send_email_server_state(email_data):
+    try:
+        email = EmailMessage()
+        email["From"] = SMTP_USERNAME
+        email["To"] = email_data.to_email
+        email["Subject"] = email_data.subject
 
+        template_context = json.loads(email_data.body)
+        email_content = consts.templates.get_template(email_data.template).render(**template_context)
+        email.set_content(email_content, subtype="html")
+
+        with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as smtp:
+            smtp.ehlo()
+            smtp.starttls()
+            smtp.login(SMTP_USERNAME, SMTP_PASSWORD)
+            smtp.send_message(email)
+
+        return {"message": "Email sent successfully"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+def send_email(email_data):
     try:
         # 이메일 설정
-        msg = MIMEMultipart()
-        msg['From'] = SMTP_USERNAME
-        msg['To'] = email_data.to_email
-        msg['Subject'] = email_data.subject
-        html_body = f"""
-              {email_data.body}
-               """
-        msg.attach(MIMEText(html_body, 'html'))
+        email = EmailMessage()
+        email["From"] = SMTP_USERNAME
+        email["To"] = email_data.to_email
+        email["Subject"] = email_data.subject
 
-        # SMTP 서버 연결 및 메일 전송
-        server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
-        server.starttls()
-        server.login(SMTP_USERNAME, SMTP_PASSWORD)
-        server.sendmail(SMTP_USERNAME, email_data.to_email, msg.as_string())
-        server.quit()
+        template_context = {"body": email_data.body}
+        email_content = consts.templates.get_template(email_data.template).render(**template_context)
+        email.set_content(email_content, subtype="html")
+
+        with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as smtp:
+            smtp.ehlo()
+            smtp.starttls()
+            smtp.login(SMTP_USERNAME, SMTP_PASSWORD)
+            smtp.send_message(email)
 
         return {"message": "Email sent successfully"}
     except Exception as e:

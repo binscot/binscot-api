@@ -7,5 +7,4 @@ router = APIRouter()
 
 @router.get("/")
 async def test():
-    email_data = server_state_service.get_server_state()
-    return mail_service.send_email(email_data)
+    return mail_service.send_email_server_state(server_state_service.get_server_state())

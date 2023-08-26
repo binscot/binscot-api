@@ -1,6 +1,6 @@
 import os
 from os import path
-
+import logging
 from dotenv import load_dotenv
 from pydantic import EmailStr
 from pydantic_settings import BaseSettings
@@ -42,8 +42,19 @@ class Settings(BaseSettings):
     SMTP_PASSWORD: str = os.getenv('SMTP_PASSWORD')
     OWNER_MAIL: EmailStr = os.getenv('OWNER_MAIL')
 
+    REDIS_SERVER: str = os.getenv('REDIS_SERVER')
+    REDIS_PORT: int = os.getenv('REDIS_PORT')
+    REDIS_DB: int = os.getenv('REDIS_DB')
+    REDIS_PASSWORD: str = os.getenv('REDIS_PASSWORD')
+
     class Config:
         case_sensitive = True
 
 
 settings = Settings()
+
+
+def setup_logging():
+    logging.basicConfig(level=logging.INFO, format='[%(asctime)s][%(name)s][%(levelname)s][%(message)s]')
+    uvicorn_logger = logging.getLogger("uvicorn")
+    uvicorn_logger.handlers = logging.getLogger().handlers

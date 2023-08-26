@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, ARRAY
 from sqlalchemy.orm import relationship
 
 from app.database.database import Base
@@ -20,8 +20,19 @@ class Post(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String, index=True)
-    content = Column(String, index=True)
-    image = Column(String, index=True)
+    content = Column(String)
+    image = Column(String)
     owner_id = Column(Integer, ForeignKey("users.id"))
 
     owner = relationship("User", back_populates="posts")
+
+
+class ChatRoom(Base):
+    __tablename__ = "chat_rooms"
+
+    id = Column(Integer, primary_key=True, index=True)
+    room_name = Column(String, index=True)
+    lock = Column(Boolean)
+    hashed_password = Column(String)
+    limit_number_rooms = Column(Integer)
+    user_in_room = Column(String)

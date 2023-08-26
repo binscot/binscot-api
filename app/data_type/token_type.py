@@ -2,7 +2,7 @@ from enum import StrEnum
 from app.core.config import settings
 
 
-class Token(StrEnum):
+class TokenType(StrEnum):
     ACCESS_TOKEN = "access_token"
     REFRESH_TOKEN = "refresh_token"
 
