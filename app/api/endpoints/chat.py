@@ -8,7 +8,7 @@ from app.core import consts
 from app.database.database import get_db
 from app.schemas import chat_schemas
 from app.service import chat_service
-
+from app.dto.response_dto import BaseResponseDTO
 router = APIRouter()
 
 
@@ -22,12 +22,12 @@ async def client(request: Request):
     return consts.templates.TemplateResponse("chat.html", {"request": request})
 
 
-@router.post("/create")
+@router.post("/create", response_model=BaseResponseDTO)
 async def client(chat_room: chat_schemas.ChatRoomCreate, db: Session = Depends(get_db)):
     return chat_service.create_chat_room(db, chat_room)
 
 
-@router.put("/add_user/{room_id}/{username}")
+@router.put("/add_user/{room_id}/{username}", response_model=BaseResponseDTO)
 def add_user_to_room(room_id: int, username: str, db: Session = Depends(get_db)):
     return chat_service.add_user_to_room(db, room_id, username)
 
