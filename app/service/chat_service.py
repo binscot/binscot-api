@@ -5,6 +5,7 @@ from fastapi import WebSocket, WebSocketDisconnect, HTTPException
 from app.crud import chat_room_crud
 from app.core.config import settings
 from app.utils import websocket_util, miscellaneous_util
+from app.dto.response_dto import BaseResponseDTO, ChatRoomResponseDTO
 
 REDIS_SERVER = settings.REDIS_SERVER
 REDIS_PORT = settings.REDIS_PORT
@@ -47,8 +48,17 @@ async def subscribe_chat_room(db, websocket: WebSocket, room_id: int, username: 
 def create_chat_room(db, chat_room):
     chat_room_in_db = chat_room_crud.get_room_by_room_name(db, chat_room_name=chat_room.room_name)
     if chat_room_in_db:
-        raise HTTPException(status_code=400, detail="room_name already registered")
-    return chat_room_crud.create_chat_room(db, chat_room)
+        return BaseResponseDTO(
+            status_code=400,
+            data=None,
+            detail='room_name already registered'
+        )
+    response_data = ChatRoomResponseDTO(**chat_room_crud.create_chat_room(db, chat_room).__dict__)
+    return BaseResponseDTO(
+        status_code=200,
+        data=response_data.__dict__,
+        detail='success'
+    )
 
 
 def add_user_to_room(db, room_id, username: str):

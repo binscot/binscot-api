@@ -1,8 +1,7 @@
 import requests
 
 from app.core.config import settings
-from app.dto.base_response_dto import BaseResponseDTO
-from app.dto.map_response import MapResponseDTO
+from app.dto.response_dto import BaseResponseDTO, MapResponseDTO
 
 OPENWEATHERMAP_API_KEY = settings.OPENWEATHERMAP_API_KEY
 OPENWEATHERMAP_LOCATION_URL = settings.OPENWEATHERMAP_LOCATION_URL
@@ -26,7 +25,7 @@ def get_location_by_city(map_data):
         data = data[0]
 
     response_data = MapResponseDTO(city=data['local_names']['ko'], country=data['country'],
-                                                lat=data['lat'], lon=data['lon'])
+                                   lat=data['lat'], lon=data['lon'])
     return BaseResponseDTO(
         status_code=200,
         data=response_data.__dict__,
