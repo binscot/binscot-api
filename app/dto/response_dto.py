@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List
 
 from pydantic import BaseModel
 
@@ -6,6 +6,15 @@ from pydantic import BaseModel
 class BaseResponseDTO(BaseModel):
     status_code: int
     data: Optional[dict] = None
+    detail: str
+
+    class Config:
+        validate_assignment = True
+
+
+class BaseResponseListDTO(BaseModel):
+    status_code: int
+    data: Optional[List] = None
     detail: str
 
     class Config:

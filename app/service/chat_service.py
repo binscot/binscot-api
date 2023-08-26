@@ -5,7 +5,7 @@ from fastapi import WebSocket, WebSocketDisconnect, HTTPException
 from app.crud import chat_room_crud
 from app.core.config import settings
 from app.utils import websocket_util, miscellaneous_util
-from app.dto.response_dto import BaseResponseDTO, ChatRoomResponseDTO
+from app.dto.response_dto import BaseResponseDTO, BaseResponseListDTO, ChatRoomResponseDTO
 
 REDIS_SERVER = settings.REDIS_SERVER
 REDIS_PORT = settings.REDIS_PORT
@@ -110,4 +110,20 @@ def remove_user_from_room(db, room_id, username: str):
 
 
 def get_chat_rooms(db):
-    return chat_room_crud.get_chat_rooms(db)
+    chat_rooms_list = chat_room_crud.get_chat_rooms(db)
+    response_data = [
+        ChatRoomResponseDTO(
+            id=room.id,
+            room_name=room.room_name,
+            lock=room.lock,
+            limit_number_rooms=room.limit_number_rooms,
+            user_in_room=room.user_in_room
+        )
+        for room in chat_rooms_list
+    ]
+
+    return BaseResponseListDTO(
+        status_code=200,
+        data=response_data,
+        detail="Chat rooms fetched successfully."
+    )

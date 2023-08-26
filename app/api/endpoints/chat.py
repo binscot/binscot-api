@@ -8,7 +8,8 @@ from app.core import consts
 from app.database.database import get_db
 from app.schemas import chat_schemas
 from app.service import chat_service
-from app.dto.response_dto import BaseResponseDTO
+from app.dto.response_dto import BaseResponseDTO, BaseResponseListDTO
+
 router = APIRouter()
 
 
@@ -32,12 +33,12 @@ def add_user_to_room(room_id: int, username: str, db: Session = Depends(get_db))
     return chat_service.add_user_to_room(db, room_id, username)
 
 
-@router.delete("/remove_user/{room_id}/{username}")
+@router.delete("/remove_user/{room_id}/{username}", response_model=BaseResponseDTO)
 def remove_user_from_room(room_id: int, username: str, db: Session = Depends(get_db)):
     return chat_service.remove_user_from_room(db, room_id, username)
 
 
-@router.get("/list", response_model=List[chat_schemas.ChatRoom])
+@router.get("/list", response_model=BaseResponseListDTO)
 def read_chat_rooms( db: Session = Depends(get_db)):
     return chat_service.get_chat_rooms(db)
 
