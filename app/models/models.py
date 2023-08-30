@@ -23,6 +23,7 @@ class Post(Base):
     content = Column(String)
     image = Column(String)
     owner_id = Column(Integer, ForeignKey("users.id"))
+    owner_name = Column(String)
 
     owner = relationship("User", back_populates="posts")
 

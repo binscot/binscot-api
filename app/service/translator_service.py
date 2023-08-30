@@ -1,6 +1,6 @@
 import httpx
 from fastapi import HTTPException
-
+from app.dto.response_dto import TranslationResDTO, SensingResDTO, BaseResponseDTO
 from app.core.config import settings
 
 PAPAGO_CLIENT_ID = settings.NAVER_CLIENT_ID
@@ -32,13 +32,22 @@ async def translate_text(translation_data):
         if response.status_code == 200:
             result = response.json()
             translated_text = result['message']['result']['translatedText']
-            return {"source_lang": source_lang, "target_lang": target_lang, "translated_text": translated_text}
+            response_data = TranslationResDTO(source_lang=source_lang, target_lang=target_lang,
+                                              translated_text=translated_text)
+            return BaseResponseDTO(
+                status_code=200,
+                data=response_data.__dict__,
+                detail='success'
+            )
         else:
-            raise HTTPException(status_code=response.status_code, detail="Translation failed.")
+            return BaseResponseDTO(
+                status_code=500,
+                data=None,
+                detail='Translation failed.'
+            )
 
 
 async def detect_language(sensing_data):
-
     headers = {
         "X-Naver-Client-Id": PAPAGO_CLIENT_ID,
         "X-Naver-Client-Secret": PAPAGO_CLIENT_SECRET
@@ -51,9 +60,23 @@ async def detect_language(sensing_data):
             response = await client.post(PAPAGO_DETECT_LANGUAGE_URL, headers=headers, data=params)
             response.raise_for_status()
             result = response.json()
+
             if "langCode" in result:
-                return {"detected_language": result["langCode"]}
+                response_data = SensingResDTO(detected_language=result["langCode"])
+                return BaseResponseDTO(
+                    status_code=200,
+                    data=response_data.__dict__,
+                    detail='success'
+                )
             else:
-                raise HTTPException(status_code=500, detail="Failed to detect language")
+                return BaseResponseDTO(
+                    status_code=500,
+                    data=None,
+                    detail='Failed to detect language'
+                )
         except httpx.RequestError as e:
-            raise HTTPException(status_code=500, detail=str(e))
+            return BaseResponseDTO(
+                status_code=500,
+                data=None,
+                detail=str(e)
+            )

@@ -1,14 +1,12 @@
-from typing import List
-
 from fastapi import APIRouter, Depends
 from fastapi import Request, WebSocket
 from sqlalchemy.orm import Session
 
 from app.core import consts
 from app.database.database import get_db
+from app.dto.response_dto import BaseResponseDTO, BaseResponseListDTO
 from app.schemas import chat_schemas
 from app.service import chat_service
-from app.dto.response_dto import BaseResponseDTO, BaseResponseListDTO
 
 router = APIRouter()
 

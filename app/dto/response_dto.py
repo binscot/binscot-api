@@ -34,3 +34,22 @@ class ChatRoomResponseDTO(BaseModel):
     lock: bool
     limit_number_rooms: int
     user_in_room: Optional[str]
+
+
+class PostResponseDTO(BaseModel):
+    id: int
+    title: str
+    content: str
+    image: str
+    owner_id: int
+    owner_name: str
+
+
+class TranslationResDTO(BaseModel):
+    source_lang: str
+    target_lang: str
+    translated_text: str
+
+
+class SensingResDTO(BaseModel):
+    detected_language: str
