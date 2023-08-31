@@ -11,7 +11,7 @@ from app.core.config import settings
 from app.crud import user_crud
 from app.data_type.token_type import TokenType
 from app.database.database import get_db
-from app.dto.base_response_dto import BaseResponseDTO
+from app.dto.response_dto import BaseResponseDTO
 from app.schemas.token_schemas import Token, TokenData
 from app.schemas.user_schemas import User
 

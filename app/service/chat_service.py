@@ -5,6 +5,7 @@ from fastapi import WebSocket, WebSocketDisconnect, HTTPException
 from app.crud import chat_room_crud
 from app.core.config import settings
 from app.utils import websocket_util, miscellaneous_util
+from app.dto.response_dto import BaseResponseDTO, BaseResponseListDTO, ChatRoomResponseDTO
 
 REDIS_SERVER = settings.REDIS_SERVER
 REDIS_PORT = settings.REDIS_PORT
@@ -47,29 +48,82 @@ async def subscribe_chat_room(db, websocket: WebSocket, room_id: int, username: 
 def create_chat_room(db, chat_room):
     chat_room_in_db = chat_room_crud.get_room_by_room_name(db, chat_room_name=chat_room.room_name)
     if chat_room_in_db:
-        raise HTTPException(status_code=400, detail="room_name already registered")
-    return chat_room_crud.create_chat_room(db, chat_room)
+        return BaseResponseDTO(
+            status_code=400,
+            data=None,
+            detail='room_name already registered'
+        )
+    response_data = ChatRoomResponseDTO(**chat_room_crud.create_chat_room(db, chat_room).__dict__)
+    return BaseResponseDTO(
+        status_code=200,
+        data=response_data.__dict__,
+        detail='success'
+    )
 
 
 def add_user_to_room(db, room_id, username: str):
     username = username.strip()
     chat_room_in_db = chat_room_crud.get_room_by_room_id(db, room_id)
     if not chat_room_in_db:
-        raise HTTPException(status_code=400, detail="Room not found")
+        return BaseResponseDTO(
+            status_code=400,
+            data=None,
+            detail='Room not found'
+        )
     if chat_room_in_db.user_in_room is not None and str('/' + username + '/') in chat_room_in_db.user_in_room:
-        raise HTTPException(status_code=400, detail="already username in the Room")
-    return chat_room_crud.add_user_to_user_in_room(db, chat_room_in_db, username)
+        return BaseResponseDTO(
+            status_code=400,
+            data=None,
+            detail='already username in the Room'
+        )
+    response_data = ChatRoomResponseDTO(
+        **chat_room_crud.add_user_to_user_in_room(db, chat_room_in_db, username).__dict__)
+    return BaseResponseDTO(
+        status_code=200,
+        data=response_data.__dict__,
+        detail='success'
+    )
 
 
 def remove_user_from_room(db, room_id, username: str):
     chat_room_in_db = chat_room_crud.get_room_by_room_id(db, room_id)
     if chat_room_in_db is None:
-        raise HTTPException(status_code=400, detail="Room is already empty")
+        return BaseResponseDTO(
+            status_code=400,
+            data=None,
+            detail='Room is already empty'
+        )
     if str('/' + username + '/') in chat_room_in_db.user_in_room:
-        return chat_room_crud.remove_user_from_user_in_room(db, chat_room_in_db, username)
+        response_data = ChatRoomResponseDTO(
+            **chat_room_crud.remove_user_from_user_in_room(db, chat_room_in_db, username).__dict__)
+        return BaseResponseDTO(
+            status_code=200,
+            data=response_data.__dict__,
+            detail='already username in the Room'
+        )
     else:
-        raise HTTPException(status_code=400, detail="user is not in the room")
+        return BaseResponseDTO(
+            status_code=400,
+            data=None,
+            detail='user is not in the room'
+        )
 
 
 def get_chat_rooms(db):
-    return chat_room_crud.get_chat_rooms(db)
+    chat_rooms_list = chat_room_crud.get_chat_rooms(db)
+    response_data = [
+        ChatRoomResponseDTO(
+            id=room.id,
+            room_name=room.room_name,
+            lock=room.lock,
+            limit_number_rooms=room.limit_number_rooms,
+            user_in_room=room.user_in_room
+        )
+        for room in chat_rooms_list
+    ]
+
+    return BaseResponseListDTO(
+        status_code=200,
+        data=response_data,
+        detail="Chat rooms fetched successfully."
+    )

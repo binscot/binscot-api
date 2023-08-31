@@ -2,7 +2,7 @@ from fastapi import APIRouter
 
 from app.service import map_service
 from app.schemas import map_schemas
-from app.dto.base_response_dto import BaseResponseDTO
+from app.dto.response_dto import BaseResponseDTO
 
 router = APIRouter()
 

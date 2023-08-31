@@ -12,6 +12,7 @@ class PostBase(BaseModel):
 class Post(PostBase):
     id: int
     owner_id: int
+    owner_name: str
 
     class Config:
         from_attributes = True
