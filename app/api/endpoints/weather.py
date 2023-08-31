@@ -1,7 +1,8 @@
 from fastapi import APIRouter
 
+from app.schemas import map_schemas
 from app.service import weather_service
-from app.schemas import map_schemas, weather_schemas
+
 router = APIRouter()
 
 
