@@ -13,7 +13,7 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 
     logging.error(error_messages)
     response_content = {
-        "code": 400,
+        "status_code": 400,
         "detail": "Validation error",
         "errors": error_messages,
         "original_request": {

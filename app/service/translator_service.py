@@ -1,5 +1,4 @@
 import httpx
-from fastapi import HTTPException
 from app.dto.response_dto import TranslationResDTO, SensingResDTO, BaseResponseDTO
 from app.core.config import settings
 

@@ -8,6 +8,7 @@ OPENWEATHERMAP_LOCATION_URL = settings.OPENWEATHERMAP_LOCATION_URL
 
 
 def get_location_by_city(map_data):
+
     params = {
         "q": f"{map_data.city},{map_data.country_code}",
         "appid": OPENWEATHERMAP_API_KEY,

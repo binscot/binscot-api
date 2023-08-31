@@ -3,7 +3,7 @@ from datetime import datetime
 import requests
 
 from app.core.config import settings
-from app.schemas import weather_schemas
+from app.dto.response_dto import WeatherWeekListResDTO, WeatherNowResDTO, WeatherWeekResDTO, BaseResponseDTO
 from app.utils import miscellaneous_util
 
 OPENWEATHERMAP_API_KEY = settings.OPENWEATHERMAP_API_KEY
@@ -43,7 +43,7 @@ def get_weather_week(map_data):
                 if last_snow_3h is not None:
                     last_snow_3h = f"{last_snow_3h}mm"
 
-                weather_item = weather_schemas.WeatherWeek(
+                weather_item = WeatherWeekResDTO(
                     kst_time=kst_time,
                     celsius=celsius,
                     feels_like=feels_like,
@@ -60,9 +60,17 @@ def get_weather_week(map_data):
                 )
                 result.append(weather_item)
             except Exception as e:
-                return e
-
-    return weather_schemas.WeatherWeekList(data=result)
+                return BaseResponseDTO(
+                    status_code=200,
+                    data=None,
+                    detail=str(e)
+                )
+    response_data = WeatherWeekListResDTO(data=result)
+    return BaseResponseDTO(
+        status_code=200,
+        data=response_data.__dict__,
+        detail='success'
+    )
 
 
 def get_weather_now(map_data):
@@ -97,8 +105,7 @@ def get_weather_now(map_data):
             last_rain_1h = data.get("rain", {}).get("1h")
             last_snow_3h = data.get("snow", {}).get("3h")
             last_snow_1h = data.get("snow", {}).get("1h")
-
-            return weather_schemas.WeatherNow(
+            response_data = WeatherNowResDTO(
                 kst_time=kst_time,
                 country=country,
                 city=city,
@@ -120,14 +127,20 @@ def get_weather_now(map_data):
                 sunrise=sunrise,
                 sunset=sunset
             )
+            return BaseResponseDTO(
+                status_code=200,
+                data=response_data.__dict__,
+                detail='success'
+            )
     except Exception as e:
-        return e
+        return BaseResponseDTO(
+            status_code=200,
+            data=None,
+            detail=str(e)
+        )
 
 
-def get_weather_data_json(
-        map_data,
-        url
-):
+def get_weather_data_json(map_data, url):
     params = {
         "q": f"{map_data.city},{map_data.country_code}",
         "appid": OPENWEATHERMAP_API_KEY,
