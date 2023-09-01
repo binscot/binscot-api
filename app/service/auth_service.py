@@ -67,7 +67,6 @@ def login(db, form_data, response):
 def create_user(db, user):
     UserInDB = user_crud.get_user_by_username(db, username=user.username)
     if UserInDB:
-        print(12)
         return BaseResponseDTO(
             status_code=400,
             data=None,

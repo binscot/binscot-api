@@ -59,7 +59,7 @@ class SensingResDTO(BaseModel):
     detected_language: str
 
 
-class WeatherNowResDTO(BaseModel):
+class WeatherNowResDTO(BaseResponseDTO):
     kst_time: datetime
     city: str
     country: str
@@ -98,8 +98,8 @@ class WeatherWeekResDTO(BaseModel):
     pop: str
 
 
-class WeatherWeekListResDTO(BaseModel):
-    data: List[WeatherWeekResDTO]
+class WeatherWeekListResDTO(BaseResponseDTO):
+    data: List[WeatherWeekResDTO] = None
 
 
 class UserResDTO(BaseResponseDTO):
@@ -111,4 +111,3 @@ class UserResDTO(BaseResponseDTO):
 
 class UserListResDTO(BaseResponseDTO):
     user_list: List[User]
-

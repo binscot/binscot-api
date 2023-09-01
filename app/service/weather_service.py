@@ -60,17 +60,9 @@ def get_weather_week(map_data):
                 )
                 result.append(weather_item)
             except Exception as e:
-                return BaseResponseDTO(
-                    status_code=200,
-                    data=None,
-                    detail=str(e)
-                )
-    response_data = WeatherWeekListResDTO(data=result)
-    return BaseResponseDTO(
-        status_code=200,
-        data=response_data.__dict__,
-        detail='success'
-    )
+                return WeatherWeekListResDTO(status_code=400, data=None, detail=str(e))
+
+    return WeatherWeekListResDTO(status_code=200, data=result, detail='success')
 
 
 def get_weather_now(map_data):
@@ -105,7 +97,8 @@ def get_weather_now(map_data):
             last_rain_1h = data.get("rain", {}).get("1h")
             last_snow_3h = data.get("snow", {}).get("3h")
             last_snow_1h = data.get("snow", {}).get("1h")
-            response_data = WeatherNowResDTO(
+            return WeatherNowResDTO(
+                status_code=200,
                 kst_time=kst_time,
                 country=country,
                 city=city,
@@ -125,16 +118,12 @@ def get_weather_now(map_data):
                 humidity=str(humidity) + '%',
                 wind=str(wind) + 'm/s',
                 sunrise=sunrise,
-                sunset=sunset
-            )
-            return BaseResponseDTO(
-                status_code=200,
-                data=response_data.__dict__,
+                sunset=sunset,
                 detail='success'
             )
     except Exception as e:
         return BaseResponseDTO(
-            status_code=200,
+            status_code=400,
             data=None,
             detail=str(e)
         )
