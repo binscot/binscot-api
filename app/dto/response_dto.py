@@ -1,6 +1,10 @@
-from typing import Optional, List
 from datetime import datetime
-from pydantic import BaseModel
+from typing import Optional, List
+
+from pydantic import BaseModel, EmailStr
+
+from app.schemas.post_schemas import Post
+from app.schemas.user_schemas import User
 
 
 class BaseResponseDTO(BaseModel):
@@ -96,3 +100,15 @@ class WeatherWeekResDTO(BaseModel):
 
 class WeatherWeekListResDTO(BaseModel):
     data: List[WeatherWeekResDTO]
+
+
+class UserResDTO(BaseResponseDTO):
+    id: int
+    username: EmailStr
+    disabled: bool | None = None
+    posts: List[Post] = []
+
+
+class UserListResDTO(BaseResponseDTO):
+    user_list: List[User]
+
