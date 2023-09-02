@@ -3,8 +3,8 @@ from typing import Optional, List
 
 from pydantic import BaseModel, EmailStr
 
-from app.schemas.post_schemas import Post
-from app.schemas.user_schemas import User
+from app.schemas.chat_schemas import ChatRoomResDTO
+from app.schemas.user_schemas import UserResDTO
 
 
 class MapResDTO(BaseModel):
@@ -14,12 +14,6 @@ class MapResDTO(BaseModel):
     lon: float
 
 
-class ChatRoomResDTO(BaseModel):
-    id: int
-    room_name: str
-    lock: bool
-    limit_number_rooms: int
-    user_in_room: Optional[str]
 
 
 class PostResDTO(BaseModel):
@@ -84,17 +78,6 @@ class WeatherWeekListResDTO(BaseModel):
     data: List[WeatherWeekResDTO] = None
 
 
-class UserResDTO(BaseModel):
-    id: int
-    username: EmailStr
-    disabled: bool | None = None
-    posts: List[Post] = []
-
-
-class UserListResDTO(BaseModel):
-    user_list: List[User]
-
-
 class TokenResDTO(BaseModel):
     access_token: str
     token_type: str
@@ -113,10 +96,11 @@ class BaseResponseDTO(BaseModel):
            WeatherNowResDTO |
            WeatherWeekListResDTO |
            UserResDTO |
-           UserListResDTO |
            List[WeatherWeekResDTO] |
            List[UserResDTO] |
-           TokenResDTO
+           TokenResDTO |
+           List[ChatRoomResDTO]
+
            ) = None
     detail: str
 

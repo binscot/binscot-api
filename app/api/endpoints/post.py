@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from app.database.database import get_db
 from app.dto.response_dto import BaseResponseDTO, BaseResponseListDTO
 from app.schemas import post_schemas
-from app.schemas.user_schemas import User
+from app.schemas.user_schemas import UserInDB
 from app.service import auth_service
 from app.service import post_service
 
@@ -15,7 +15,7 @@ router = APIRouter()
 
 @router.post("/create", response_model=BaseResponseDTO)
 def create_post(
-        current_user: Annotated[User, Depends(auth_service.get_current_active_user)],
+        current_user: Annotated[UserInDB, Depends(auth_service.get_current_active_user)],
         post: post_schemas.PostCreate,
         db: Session = Depends(get_db)
 ):

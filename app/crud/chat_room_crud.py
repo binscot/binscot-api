@@ -4,9 +4,10 @@ from sqlalchemy.orm import Session
 
 from app.models import models
 from app.schemas import chat_schemas
+from app.schemas.chat_schemas import ChatRoomResDTO
 
 
-def create_chat_room(db: Session, chat_room: chat_schemas.ChatRoomCreate):
+def create_chat_room(db: Session, chat_room: chat_schemas.ChatRoomCreateReqDTO):
     new_room = models.ChatRoom(**chat_room.__dict__)
     db.add(new_room)
     db.commit()
@@ -31,11 +32,11 @@ def add_user_to_user_in_room(db, chat_room, username: str):
     return chat_room
 
 
-def get_room_by_room_name(db: Session, chat_room_name: str):
+def get_room_by_room_name(db: Session, chat_room_name: str) -> chat_schemas.ChatRoomInDB | None:
     return db.query(models.ChatRoom).filter(models.ChatRoom.room_name == chat_room_name).first()
 
 
-def get_room_by_room_id(db: Session, chat_room_id: int) -> chat_schemas.ChatRoom | None:
+def get_room_by_room_id(db: Session, chat_room_id: int) -> chat_schemas.ChatRoomInDB | None:
     return db.query(models.ChatRoom).filter(models.ChatRoom.id == chat_room_id).first()
 
 
@@ -47,5 +48,5 @@ def remove_user_from_user_in_room(db, chat_room_in_db, username):
     return chat_room_in_db
 
 
-def get_chat_rooms(db: Session) -> list[Type[chat_schemas.ChatRoom]]:
+def get_chat_rooms(db: Session) -> list[Type[ChatRoomResDTO]]:
     return db.query(models.ChatRoom).all()

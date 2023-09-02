@@ -7,24 +7,20 @@ from app.schemas.post_schemas import Post
 
 
 class UserBase(BaseModel):
-    username: EmailStr
-
-
-class User(BaseModel):
     id: int
     username: EmailStr
     disabled: bool | None = None
     posts: List[Post] = []
 
 
-class UserInDB(User):
+class UserInDB(UserBase):
     hashed_password: str
 
     class Config:
         from_attributes = True
 
 
-class UserCreate(BaseModel):
+class UserCreateReqDTO(BaseModel):
     username: EmailStr
     password1: str
     password2: str
@@ -41,3 +37,6 @@ class UserCreate(BaseModel):
             raise ValueError(v, 'passwords do not match')
         return v
 
+
+class UserResDTO(UserBase):
+    pass

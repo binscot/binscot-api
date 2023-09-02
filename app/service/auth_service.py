@@ -11,9 +11,9 @@ from app.core.config import settings
 from app.crud import user_crud
 from app.data_type.token_type import TokenType
 from app.database.database import get_db
-from app.dto.response_dto import BaseResponseDTO, UserResDTO, TokenResDTO
-from app.schemas.token_schemas import Token, TokenData
-from app.schemas.user_schemas import User
+from app.dto.response_dto import BaseResponseDTO, TokenResDTO
+from app.schemas.token_schemas import TokenData
+from app.schemas.user_schemas import UserInDB, UserResDTO
 
 ALGORITHM = settings.HASH_ALGORITHM
 
@@ -42,21 +42,21 @@ def create_access_token(db, request):
 
 
 def login(db, form_data, response):
-    user = authenticate_user(db, form_data.username, form_data.password)
-    if not user:
+    login_user = authenticate_user(db, form_data.username, form_data.password)
+    if not login_user:
         return BaseResponseDTO(
             status_code=401,
             data=None,
             detail='Incorrect username or password'
         )
     response_data = TokenResDTO(
-        access_token=create_jwt_token(data={"sub": user.username}, token_type=TokenType.ACCESS_TOKEN),
+        access_token=create_jwt_token(data={"sub": login_user.username}, token_type=TokenType.ACCESS_TOKEN),
         token_type="bearer",
-        username=user.username
+        username=login_user.username
     )
     response.set_cookie(
         key="refresh_token",
-        value=create_jwt_token(data={"sub": user.username}, token_type=TokenType.REFRESH_TOKEN), httponly=True)
+        value=create_jwt_token(data={"sub": login_user.username}, token_type=TokenType.REFRESH_TOKEN), httponly=True)
     return BaseResponseDTO(
         status_code=200,
         data=response_data,
@@ -64,16 +64,21 @@ def login(db, form_data, response):
     )
 
 
-def create_user(db, user):
-    UserInDB = user_crud.get_user_by_username(db, username=user.username)
-    if UserInDB:
+def create_user(db, user_create_req_dto):
+    db_user = user_crud.get_user_by_username(db, username=user_create_req_dto.username)
+    if db_user:
         return BaseResponseDTO(
             status_code=400,
             data=None,
             detail='username already registered'
         )
-    user = user_crud.create_user(db=db, user=user)
-    response_data = UserResDTO(id=user.id, username=user.username, disabled=user.disabled, posts=user.posts)
+    new_user = user_crud.create_user(db=db, user=user_create_req_dto)
+    response_data = UserResDTO(
+        id=new_user.id,
+        username=new_user.username,
+        disabled=new_user.disabled,
+        posts=new_user.posts
+    )
     return BaseResponseDTO(
         status_code=200,
         data=response_data,
@@ -132,7 +137,7 @@ async def get_current_user(token: Annotated[str, Depends(consts.oauth2_scheme)],
 
 
 async def get_current_active_user(
-        current_user: Annotated[User, Depends(get_current_user)]
+        current_user: Annotated[UserInDB, Depends(get_current_user)]
 ):
     if current_user.disabled:
         raise HTTPException(status_code=400, detail="Inactive user")

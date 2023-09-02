@@ -1,5 +1,6 @@
 from app.crud import user_crud
-from app.dto.response_dto import BaseResponseDTO, UserResDTO
+from app.dto.response_dto import BaseResponseDTO
+from app.schemas.user_schemas import UserResDTO
 
 
 def get_user_me(current_user):

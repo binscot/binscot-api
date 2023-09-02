@@ -6,15 +6,15 @@ from sqlalchemy.orm import Session
 
 from app.database.database import get_db
 from app.dto.response_dto import BaseResponseDTO
-from app.schemas.user_schemas import UserCreate
+from app.schemas.user_schemas import UserCreateReqDTO
 from app.service import auth_service
 
 router = APIRouter()
 
 
 @router.post("/signup", response_model=BaseResponseDTO)
-def create_user(user: UserCreate, db: Session = Depends(get_db)):
-    return auth_service.create_user(db, user)
+def create_user(user_create_req_dto: UserCreateReqDTO, db: Session = Depends(get_db)):
+    return auth_service.create_user(db, user_create_req_dto)
 
 
 @router.post("/login", response_model=BaseResponseDTO)

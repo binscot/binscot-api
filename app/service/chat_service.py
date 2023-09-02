@@ -4,8 +4,9 @@ import redis
 from fastapi import WebSocket, WebSocketDisconnect, HTTPException
 from app.crud import chat_room_crud
 from app.core.config import settings
+from app.schemas.chat_schemas import ChatRoomResDTO
 from app.utils import websocket_util, miscellaneous_util
-from app.dto.response_dto import BaseResponseDTO, BaseResponseListDTO, ChatRoomResDTO
+from app.dto.response_dto import BaseResponseDTO, BaseResponseListDTO
 
 REDIS_SERVER = settings.REDIS_SERVER
 REDIS_PORT = settings.REDIS_PORT
@@ -45,15 +46,15 @@ async def subscribe_chat_room(db, websocket: WebSocket, room_id: int, username: 
         pass
 
 
-def create_chat_room(db, chat_room):
-    chat_room_in_db = chat_room_crud.get_room_by_room_name(db, chat_room_name=chat_room.room_name)
+def create_chat_room(db, create_chat_room_req_dto):
+    chat_room_in_db = chat_room_crud.get_room_by_room_name(db, chat_room_name=create_chat_room_req_dto.room_name)
     if chat_room_in_db:
         return BaseResponseDTO(
             status_code=400,
             data=None,
             detail='room_name already registered'
         )
-    response_data = ChatRoomResDTO(**chat_room_crud.create_chat_room(db, chat_room).__dict__)
+    response_data = ChatRoomResDTO(**chat_room_crud.create_chat_room(db, create_chat_room_req_dto).__dict__)
     return BaseResponseDTO(
         status_code=200,
         data=response_data,
@@ -111,6 +112,7 @@ def remove_user_from_room(db, room_id, username: str):
 
 def get_chat_rooms(db):
     chat_rooms_list = chat_room_crud.get_chat_rooms(db)
+    print(chat_rooms_list)
     response_data = [
         ChatRoomResDTO(
             id=room.id,
@@ -122,7 +124,7 @@ def get_chat_rooms(db):
         for room in chat_rooms_list
     ]
 
-    return BaseResponseListDTO(
+    return BaseResponseDTO(
         status_code=200,
         data=response_data,
         detail="Chat rooms fetched successfully."
