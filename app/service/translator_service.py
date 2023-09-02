@@ -35,7 +35,7 @@ async def translate_text(translation_data):
                                               translated_text=translated_text)
             return BaseResponseDTO(
                 status_code=200,
-                data=response_data.__dict__,
+                data=response_data,
                 detail='success'
             )
         else:
@@ -64,7 +64,7 @@ async def detect_language(sensing_data):
                 response_data = SensingResDTO(detected_language=result["langCode"])
                 return BaseResponseDTO(
                     status_code=200,
-                    data=response_data.__dict__,
+                    data=response_data,
                     detail='success'
                 )
             else:

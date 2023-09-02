@@ -11,7 +11,7 @@ from app.core.config import settings
 from app.crud import user_crud
 from app.data_type.token_type import TokenType
 from app.database.database import get_db
-from app.dto.response_dto import BaseResponseDTO
+from app.dto.response_dto import BaseResponseDTO, UserResDTO, TokenResDTO
 from app.schemas.token_schemas import Token, TokenData
 from app.schemas.user_schemas import User
 
@@ -33,10 +33,10 @@ def create_access_token(db, request):
         settings.HASH_ALGORITHM, db
     )
     access_token = create_jwt_token(data={"sub": user.username}, token_type=TokenType.ACCESS_TOKEN)
-    response_data = Token(access_token=access_token, token_type="bearer", username=user.username)
+    response_data = TokenResDTO(access_token=access_token, token_type="bearer", username=user.username)
     return BaseResponseDTO(
         status_code=200,
-        data=response_data.__dict__,
+        data=response_data,
         detail='success'
     )
 
@@ -49,7 +49,7 @@ def login(db, form_data, response):
             data=None,
             detail='Incorrect username or password'
         )
-    response_data = Token(
+    response_data = TokenResDTO(
         access_token=create_jwt_token(data={"sub": user.username}, token_type=TokenType.ACCESS_TOKEN),
         token_type="bearer",
         username=user.username
@@ -59,7 +59,7 @@ def login(db, form_data, response):
         value=create_jwt_token(data={"sub": user.username}, token_type=TokenType.REFRESH_TOKEN), httponly=True)
     return BaseResponseDTO(
         status_code=200,
-        data=response_data.__dict__,
+        data=response_data,
         detail='success'
     )
 
@@ -73,10 +73,10 @@ def create_user(db, user):
             detail='username already registered'
         )
     user = user_crud.create_user(db=db, user=user)
-    response_data = User(id=user.id, username=user.username, disabled=user.disabled, posts=user.posts)
+    response_data = UserResDTO(id=user.id, username=user.username, disabled=user.disabled, posts=user.posts)
     return BaseResponseDTO(
         status_code=200,
-        data=response_data.__dict__,
+        data=response_data,
         detail='success'
     )
 

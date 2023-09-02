@@ -7,32 +7,14 @@ from app.schemas.post_schemas import Post
 from app.schemas.user_schemas import User
 
 
-class BaseResponseDTO(BaseModel):
-    status_code: int
-    data: Optional[dict] = None
-    detail: str
-
-    class Config:
-        validate_assignment = True
-
-
-class BaseResponseListDTO(BaseModel):
-    status_code: int
-    data: Optional[List] = None
-    detail: str
-
-    class Config:
-        validate_assignment = True
-
-
-class MapResponseDTO(BaseModel):
+class MapResDTO(BaseModel):
     city: str
     country: str
     lat: float
     lon: float
 
 
-class ChatRoomResponseDTO(BaseModel):
+class ChatRoomResDTO(BaseModel):
     id: int
     room_name: str
     lock: bool
@@ -40,7 +22,7 @@ class ChatRoomResponseDTO(BaseModel):
     user_in_room: Optional[str]
 
 
-class PostResponseDTO(BaseModel):
+class PostResDTO(BaseModel):
     id: int
     title: str
     content: str
@@ -59,7 +41,7 @@ class SensingResDTO(BaseModel):
     detected_language: str
 
 
-class WeatherNowResDTO(BaseResponseDTO):
+class WeatherNowResDTO(BaseModel):
     kst_time: datetime
     city: str
     country: str
@@ -98,16 +80,54 @@ class WeatherWeekResDTO(BaseModel):
     pop: str
 
 
-class WeatherWeekListResDTO(BaseResponseDTO):
+class WeatherWeekListResDTO(BaseModel):
     data: List[WeatherWeekResDTO] = None
 
 
-class UserResDTO(BaseResponseDTO):
+class UserResDTO(BaseModel):
     id: int
     username: EmailStr
     disabled: bool | None = None
     posts: List[Post] = []
 
 
-class UserListResDTO(BaseResponseDTO):
+class UserListResDTO(BaseModel):
     user_list: List[User]
+
+
+class TokenResDTO(BaseModel):
+    access_token: str
+    token_type: str
+    username: EmailStr
+
+
+class BaseResponseDTO(BaseModel):
+    status_code: int
+    data: (Optional[dict] |
+           MapResDTO |
+           ChatRoomResDTO |
+           PostResDTO |
+           TranslationResDTO |
+           SensingResDTO |
+           WeatherWeekResDTO |
+           WeatherNowResDTO |
+           WeatherWeekListResDTO |
+           UserResDTO |
+           UserListResDTO |
+           List[WeatherWeekResDTO] |
+           List[UserResDTO] |
+           TokenResDTO
+           ) = None
+    detail: str
+
+    class Config:
+        validate_assignment = True
+
+
+class BaseResponseListDTO(BaseModel):
+    status_code: int
+    data: Optional[List] = None
+    detail: str
+
+    class Config:
+        validate_assignment = True

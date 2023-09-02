@@ -4,18 +4,18 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from app.database.database import get_db
-from app.dto.response_dto import UserResDTO, UserListResDTO
+from app.dto.response_dto import UserResDTO, UserListResDTO, BaseResponseDTO
 from app.service import auth_service, user_service
 
 router = APIRouter()
 
 
-@router.get("/", response_model=UserListResDTO)
+@router.get("/", response_model=BaseResponseDTO)
 def read_users(db: Session = Depends(get_db)):
     return user_service.get_user_list(db)
 
 
-@router.get("/me", response_model=UserResDTO)
+@router.get("/me", response_model=BaseResponseDTO)
 async def get_user_me(
         current_user: Annotated[UserResDTO, Depends(auth_service.get_current_active_user)]
 ):

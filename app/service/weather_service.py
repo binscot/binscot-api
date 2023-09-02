@@ -3,7 +3,7 @@ from datetime import datetime
 import requests
 
 from app.core.config import settings
-from app.dto.response_dto import WeatherWeekListResDTO, WeatherNowResDTO, WeatherWeekResDTO, BaseResponseDTO
+from app.dto.response_dto import WeatherNowResDTO, WeatherWeekResDTO, BaseResponseDTO
 from app.utils import miscellaneous_util
 
 OPENWEATHERMAP_API_KEY = settings.OPENWEATHERMAP_API_KEY
@@ -17,7 +17,7 @@ def get_weather_week(map_data):
         OPENWEATHERMAP_WEATHER_WEEK_URL
     )
 
-    result = []
+    response_data = []
     if data.get("cod") == "200":
         for item in data.get("list", []):
             weather = item.get("weather", [])[0]
@@ -58,11 +58,19 @@ def get_weather_week(map_data):
                     weather_description=description,
                     pop=str(probability_of_precipitation) + '%'
                 )
-                result.append(weather_item)
+                response_data.append(weather_item)
             except Exception as e:
-                return WeatherWeekListResDTO(status_code=400, data=None, detail=str(e))
+                return BaseResponseDTO(
+                    status_code=400,
+                    data=None,
+                    detail=str(e)
+                )
 
-    return WeatherWeekListResDTO(status_code=200, data=result, detail='success')
+    return BaseResponseDTO(
+        status_code=200,
+        data=response_data,
+        detail='success'
+    )
 
 
 def get_weather_now(map_data):
@@ -97,8 +105,8 @@ def get_weather_now(map_data):
             last_rain_1h = data.get("rain", {}).get("1h")
             last_snow_3h = data.get("snow", {}).get("3h")
             last_snow_1h = data.get("snow", {}).get("1h")
-            return WeatherNowResDTO(
-                status_code=200,
+
+            response_data = WeatherNowResDTO(
                 kst_time=kst_time,
                 country=country,
                 city=city,
@@ -119,6 +127,10 @@ def get_weather_now(map_data):
                 wind=str(wind) + 'm/s',
                 sunrise=sunrise,
                 sunset=sunset,
+            )
+            return BaseResponseDTO(
+                status_code=200,
+                data=response_data,
                 detail='success'
             )
     except Exception as e:

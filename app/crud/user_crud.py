@@ -3,6 +3,7 @@ from typing import Type
 from sqlalchemy.orm import Session
 
 from app.core import consts
+from app.dto.response_dto import UserResDTO
 from app.models import models
 from app.schemas import user_schemas
 
@@ -15,7 +16,7 @@ def get_user_by_user_id(db: Session, user_id: int) -> user_schemas.UserInDB | No
     return db.query(models.User).get(user_id)
 
 
-def get_users(db: Session) -> list[Type[user_schemas.UserInDB]]:
+def get_users(db: Session) -> list[Type[UserResDTO]]:
     return db.query(models.User).all()
 
 

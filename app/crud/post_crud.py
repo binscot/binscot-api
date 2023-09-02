@@ -2,18 +2,18 @@ from sqlalchemy.orm import Session
 from typing import Type
 from app.models import models
 from app.schemas import post_schemas
-from app.dto.response_dto import PostResponseDTO
+from app.dto.response_dto import PostResDTO
 
 
-def get_posts(db: Session) -> list[Type[PostResponseDTO]]:
+def get_posts(db: Session) -> list[Type[PostResDTO]]:
     return db.query(models.Post).all()
 
 
-def get_post(db: Session, post_id: int) -> PostResponseDTO | None:
+def get_post(db: Session, post_id: int) -> PostResDTO | None:
     return db.query(models.Post).get(post_id)
 
 
-def create_post(db: Session, post: post_schemas.PostCreate, current_user) -> PostResponseDTO | None:
+def create_post(db: Session, post: post_schemas.PostCreate, current_user) -> PostResDTO | None:
     db_post = models.Post(**post.__dict__, owner_id=current_user.id, owner_name=current_user.username)
     db.add(db_post)
     db.commit()

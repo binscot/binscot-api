@@ -1,18 +1,25 @@
 from app.crud import user_crud
-from app.dto.response_dto import UserListResDTO
-from app.schemas.user_schemas import User
+from app.dto.response_dto import BaseResponseDTO, UserResDTO
 
 
 def get_user_me(current_user):
-    current_user.status_code = 200
-    current_user.detail = 'success'
-    return current_user
+    response_data = UserResDTO(
+        id=current_user.id,
+        username=current_user.username,
+        disabled=current_user.disabled,
+        posts=current_user.posts
+    )
+    return BaseResponseDTO(
+        status_code=200,
+        data=response_data,
+        detail='success'
+    )
 
 
 def get_user_list(db):
     user_list = user_crud.get_users(db)
     response_data = [
-        User(
+        UserResDTO(
             id=user.id,
             username=user.username,
             disabled=user.disabled,
@@ -20,8 +27,8 @@ def get_user_list(db):
         ) for user in user_list
     ]
 
-    return UserListResDTO(
+    return BaseResponseDTO(
         status_code=200,
-        user_list=response_data,
+        data=response_data,
         detail='success'
     )

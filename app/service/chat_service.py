@@ -5,7 +5,7 @@ from fastapi import WebSocket, WebSocketDisconnect, HTTPException
 from app.crud import chat_room_crud
 from app.core.config import settings
 from app.utils import websocket_util, miscellaneous_util
-from app.dto.response_dto import BaseResponseDTO, BaseResponseListDTO, ChatRoomResponseDTO
+from app.dto.response_dto import BaseResponseDTO, BaseResponseListDTO, ChatRoomResDTO
 
 REDIS_SERVER = settings.REDIS_SERVER
 REDIS_PORT = settings.REDIS_PORT
@@ -53,10 +53,10 @@ def create_chat_room(db, chat_room):
             data=None,
             detail='room_name already registered'
         )
-    response_data = ChatRoomResponseDTO(**chat_room_crud.create_chat_room(db, chat_room).__dict__)
+    response_data = ChatRoomResDTO(**chat_room_crud.create_chat_room(db, chat_room).__dict__)
     return BaseResponseDTO(
         status_code=200,
-        data=response_data.__dict__,
+        data=response_data,
         detail='success'
     )
 
@@ -76,11 +76,11 @@ def add_user_to_room(db, room_id, username: str):
             data=None,
             detail='already username in the Room'
         )
-    response_data = ChatRoomResponseDTO(
+    response_data = ChatRoomResDTO(
         **chat_room_crud.add_user_to_user_in_room(db, chat_room_in_db, username).__dict__)
     return BaseResponseDTO(
         status_code=200,
-        data=response_data.__dict__,
+        data=response_data,
         detail='success'
     )
 
@@ -94,11 +94,11 @@ def remove_user_from_room(db, room_id, username: str):
             detail='Room is already empty'
         )
     if str('/' + username + '/') in chat_room_in_db.user_in_room:
-        response_data = ChatRoomResponseDTO(
+        response_data = ChatRoomResDTO(
             **chat_room_crud.remove_user_from_user_in_room(db, chat_room_in_db, username).__dict__)
         return BaseResponseDTO(
             status_code=200,
-            data=response_data.__dict__,
+            data=response_data,
             detail='already username in the Room'
         )
     else:
@@ -112,7 +112,7 @@ def remove_user_from_room(db, room_id, username: str):
 def get_chat_rooms(db):
     chat_rooms_list = chat_room_crud.get_chat_rooms(db)
     response_data = [
-        ChatRoomResponseDTO(
+        ChatRoomResDTO(
             id=room.id,
             room_name=room.room_name,
             lock=room.lock,
