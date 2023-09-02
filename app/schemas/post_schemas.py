@@ -9,7 +9,7 @@ class PostBase(BaseModel):
     image: str
 
 
-class Post(PostBase):
+class PostResDTO(PostBase):
     id: int
     owner_id: int
     owner_name: str
@@ -18,7 +18,16 @@ class Post(PostBase):
         from_attributes = True
 
 
-class PostCreate(PostBase):
+# class PostResDTO(BaseModel):
+#     id: int
+#     title: str
+#     content: str
+#     image: str
+#     owner_id: int
+#     owner_name: str
+
+
+class PostCreateReqDTO(PostBase):
     pass
 
     @field_validator('title', 'content')

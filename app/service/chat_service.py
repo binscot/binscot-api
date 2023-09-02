@@ -2,11 +2,12 @@ import json
 
 import redis
 from fastapi import WebSocket, WebSocketDisconnect, HTTPException
-from app.crud import chat_room_crud
+
 from app.core.config import settings
+from app.crud import chat_room_crud
+from app.dto.response_dto import BaseResponseDTO
 from app.schemas.chat_schemas import ChatRoomResDTO
 from app.utils import websocket_util, miscellaneous_util
-from app.dto.response_dto import BaseResponseDTO, BaseResponseListDTO
 
 REDIS_SERVER = settings.REDIS_SERVER
 REDIS_PORT = settings.REDIS_PORT

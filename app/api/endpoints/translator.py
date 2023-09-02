@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from app.dto.request_dto import TranslationReqData, SensingReqData
+from app.schemas.translator_schemas import TranslationReqData, SensingReqData
 from app.service import translator_service
 from app.dto.response_dto import BaseResponseDTO
 router = APIRouter()

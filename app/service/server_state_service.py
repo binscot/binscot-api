@@ -2,7 +2,7 @@ import json
 
 from app.core.config import settings
 from app.schemas import mail_schemas
-from app.schemas import map_schemas
+from app.schemas.map_schemas import MapReqDTO
 from app.service import weather_service, mail_service
 from app.utils import miscellaneous_util
 
@@ -13,7 +13,7 @@ def get_server_state():
     to_email = OWNER_MAIL
     subject = "server state and weather"
     mail_template = "server_state_template.html"
-    map_data = map_schemas.MapData(city="seoul", country_code="KR")
+    map_data = MapReqDTO(city="seoul", country_code="KR")
     try:
         cat_url = miscellaneous_util.get_random_cat_image()
         weather_seoul = weather_service.get_weather_now(map_data)

@@ -1,5 +1,6 @@
 from app.crud import post_crud
-from app.dto.response_dto import BaseResponseDTO, PostResDTO, BaseResponseListDTO
+from app.dto.response_dto import BaseResponseDTO
+from app.schemas.post_schemas import PostResDTO
 
 
 def read_post(db, post_id):
@@ -17,9 +18,9 @@ def read_post(db, post_id):
     )
 
 
-def create_post(db, post, current_user):
+def create_post(db, post_create_req_dto, current_user):
     try:
-        response_data = PostResDTO(**post_crud.create_post(db, post, current_user).__dict__)
+        response_data = PostResDTO(**post_crud.create_post(db, post_create_req_dto, current_user).__dict__)
         return BaseResponseDTO(
             status_code=200,
             data=response_data,
@@ -53,7 +54,7 @@ def get_post_list(db):
             data=None,
             detail=str(e)
         )
-    return BaseResponseListDTO(
+    return BaseResponseDTO(
         status_code=200,
         data=response_data,
         detail="Post list fetched successfully."

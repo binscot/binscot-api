@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 
 from app.core import consts
 from app.database.database import get_db
-from app.dto.response_dto import BaseResponseDTO, BaseResponseListDTO
+from app.dto.response_dto import BaseResponseDTO
 from app.schemas import chat_schemas
 from app.service import chat_service
 
@@ -36,6 +36,6 @@ def remove_user_from_room(room_id: int, username: str, db: Session = Depends(get
     return chat_service.remove_user_from_room(db, room_id, username)
 
 
-@router.get("/list", response_model=BaseResponseListDTO)
+@router.get("/list", response_model=BaseResponseDTO)
 def read_chat_rooms(db: Session = Depends(get_db)):
     return chat_service.get_chat_rooms(db)

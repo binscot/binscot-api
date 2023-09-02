@@ -3,7 +3,8 @@ from datetime import datetime
 import requests
 
 from app.core.config import settings
-from app.dto.response_dto import WeatherNowResDTO, WeatherWeekResDTO, BaseResponseDTO
+from app.dto.response_dto import BaseResponseDTO
+from app.schemas.weather_schemas import WeatherNowResDTO, WeatherWeekResDTO
 from app.utils import miscellaneous_util
 
 OPENWEATHERMAP_API_KEY = settings.OPENWEATHERMAP_API_KEY

@@ -1,7 +1,8 @@
 import requests
 
 from app.core.config import settings
-from app.dto.response_dto import BaseResponseDTO, MapResDTO
+from app.dto.response_dto import BaseResponseDTO
+from app.schemas.map_schemas import MapResDTO
 
 OPENWEATHERMAP_API_KEY = settings.OPENWEATHERMAP_API_KEY
 OPENWEATHERMAP_LOCATION_URL = settings.OPENWEATHERMAP_LOCATION_URL

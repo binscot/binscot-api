@@ -4,7 +4,7 @@ from email.message import EmailMessage
 
 from app.core import consts
 from app.core.config import settings
-from app.dto.response_dto import BaseResponseListDTO
+from app.dto.response_dto import BaseResponseDTO
 
 # Gmail SMTP 설정
 SMTP_SERVER = settings.SMTP_SERVER
@@ -30,14 +30,14 @@ def send_email_server_state(email_data):
             smtp.login(SMTP_USERNAME, SMTP_PASSWORD)
             smtp.send_message(email)
 
-        return BaseResponseListDTO(
+        return BaseResponseDTO(
             status_code=200,
             data=None,
             detail="Email sent successfully"
         )
 
     except Exception as e:
-        return BaseResponseListDTO(
+        return BaseResponseDTO(
             status_code=500,
             data=None,
             detail=str(e)
@@ -62,13 +62,13 @@ def send_email(email_data):
             smtp.login(SMTP_USERNAME, SMTP_PASSWORD)
             smtp.send_message(email)
 
-        return BaseResponseListDTO(
+        return BaseResponseDTO(
             status_code=200,
             data=None,
             detail="Email sent successfully"
         )
     except Exception as e:
-        return BaseResponseListDTO(
+        return BaseResponseDTO(
             status_code=500,
             data=None,
             detail=str(e)

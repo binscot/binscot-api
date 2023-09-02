@@ -1,7 +1,7 @@
 from pydantic import BaseModel, field_validator
 
 
-class MapData(BaseModel):
+class MapReqDTO(BaseModel):
     city: str
     country_code: str
 
@@ -11,3 +11,9 @@ class MapData(BaseModel):
             raise ValueError(v, '빈 값은 허용되지 않습니다.')
         return v
 
+
+class MapResDTO(BaseModel):
+    city: str
+    country: str
+    lat: float
+    lon: float

@@ -11,8 +11,8 @@ from app.core.config import settings
 from app.crud import user_crud
 from app.data_type.token_type import TokenType
 from app.database.database import get_db
-from app.dto.response_dto import BaseResponseDTO, TokenResDTO
-from app.schemas.token_schemas import TokenData
+from app.dto.response_dto import BaseResponseDTO
+from app.schemas.token_schemas import TokenData, TokenResDTO
 from app.schemas.user_schemas import UserInDB, UserResDTO
 
 ALGORITHM = settings.HASH_ALGORITHM

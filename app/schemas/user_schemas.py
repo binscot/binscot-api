@@ -3,14 +3,14 @@ from typing import List
 from pydantic import BaseModel, EmailStr, field_validator
 from pydantic_core.core_schema import FieldValidationInfo
 
-from app.schemas.post_schemas import Post
+from app.schemas.post_schemas import PostResDTO
 
 
 class UserBase(BaseModel):
     id: int
     username: EmailStr
     disabled: bool | None = None
-    posts: List[Post] = []
+    posts: List[PostResDTO] = []
 
 
 class UserInDB(UserBase):

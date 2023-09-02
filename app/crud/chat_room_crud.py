@@ -2,13 +2,13 @@ from typing import Type
 
 from sqlalchemy.orm import Session
 
-from app.models import models
+from app.models.models import ChatRoom
 from app.schemas import chat_schemas
 from app.schemas.chat_schemas import ChatRoomResDTO
 
 
 def create_chat_room(db: Session, chat_room: chat_schemas.ChatRoomCreateReqDTO):
-    new_room = models.ChatRoom(**chat_room.__dict__)
+    new_room = ChatRoom(**chat_room.__dict__)
     db.add(new_room)
     db.commit()
     db.refresh(new_room)
@@ -17,7 +17,7 @@ def create_chat_room(db: Session, chat_room: chat_schemas.ChatRoomCreateReqDTO):
 
 
 def get_chat_room(db: Session, room_id: int):
-    return db.query(models.ChatRoom).get(room_id)
+    return db.query(ChatRoom).get(room_id)
 
 
 def add_user_to_user_in_room(db, chat_room, username: str):
@@ -33,11 +33,11 @@ def add_user_to_user_in_room(db, chat_room, username: str):
 
 
 def get_room_by_room_name(db: Session, chat_room_name: str) -> chat_schemas.ChatRoomInDB | None:
-    return db.query(models.ChatRoom).filter(models.ChatRoom.room_name == chat_room_name).first()
+    return db.query(ChatRoom).filter(ChatRoom.room_name == chat_room_name).first()
 
 
 def get_room_by_room_id(db: Session, chat_room_id: int) -> chat_schemas.ChatRoomInDB | None:
-    return db.query(models.ChatRoom).filter(models.ChatRoom.id == chat_room_id).first()
+    return db.query(ChatRoom).filter(ChatRoom.id == chat_room_id).first()
 
 
 def remove_user_from_user_in_room(db, chat_room_in_db, username):
@@ -49,4 +49,4 @@ def remove_user_from_user_in_room(db, chat_room_in_db, username):
 
 
 def get_chat_rooms(db: Session) -> list[Type[ChatRoomResDTO]]:
-    return db.query(models.ChatRoom).all()
+    return db.query(ChatRoom).all()

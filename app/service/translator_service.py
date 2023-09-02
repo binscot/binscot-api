@@ -1,6 +1,7 @@
 import httpx
-from app.dto.response_dto import TranslationResDTO, SensingResDTO, BaseResponseDTO
+from app.dto.response_dto import  BaseResponseDTO
 from app.core.config import settings
+from app.schemas.translator_schemas import TranslationResDTO, SensingResDTO
 
 PAPAGO_CLIENT_ID = settings.NAVER_CLIENT_ID
 PAPAGO_CLIENT_SECRET = settings.NAVER_CLIENT_SECRET
