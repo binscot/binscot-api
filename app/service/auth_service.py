@@ -122,13 +122,13 @@ async def get_current_user(token: Annotated[str, Depends(consts.oauth2_scheme)],
         payload = jwt.decode(token, TokenType.get_key(TokenType.ACCESS_TOKEN), algorithms=[ALGORITHM])
         username: str = payload.get("sub")
         if username is None:
-            raise CredentialsException(name='get_current_user')
+            raise CredentialsException(name='토큰에 사용자 정보가 없습니다.')
         token_data = TokenData(username=username)
-    except JWTError:
-        raise CredentialsException(name='get_current_user')
+    except JWTError as e:
+        raise CredentialsException(name=str(e))
     user = user_crud.get_user_by_username(db, username=token_data.username)
     if user is None:
-        raise CredentialsException(name='get_current_user')
+        raise CredentialsException(name='해당 사용자와 일치하는 사용자가 없습니다.')
     return user
 
 

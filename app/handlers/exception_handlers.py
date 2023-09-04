@@ -32,12 +32,12 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 
 async def credentials_exception_handler(request: Request, exc: CredentialsException):
     response_content = {
-        "status_code": 401,
-        "detail": "Could not validate credentials",
-        "errors": exc.name,
-        "original_request": {
-            "client": request.client,
-            "url": str(request.url)
+        'status_code': 401,
+        'detail': 'Could not validate credentials',
+        'errors': exc.name,
+        'original_request': {
+            'client': request.client,
+            'url': str(request.url)
         }
     }
 
