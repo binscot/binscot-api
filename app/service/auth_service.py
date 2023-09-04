@@ -14,6 +14,7 @@ from app.database.database import get_db
 from app.dto.response_dto import BaseResponseDTO
 from app.schemas.token_schemas import TokenData, TokenResDTO
 from app.schemas.user_schemas import UserInDB, UserResDTO
+from app.handlers.exception_handlers import CredentialsException
 
 ALGORITHM = settings.HASH_ALGORITHM
 
@@ -117,22 +118,17 @@ def create_jwt_token(data: dict, token_type: TokenType):
 
 async def get_current_user(token: Annotated[str, Depends(consts.oauth2_scheme)],
                            db: Session = Depends(get_db)):
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
     try:
         payload = jwt.decode(token, TokenType.get_key(TokenType.ACCESS_TOKEN), algorithms=[ALGORITHM])
         username: str = payload.get("sub")
         if username is None:
-            raise credentials_exception
+            raise CredentialsException(name='get_current_user')
         token_data = TokenData(username=username)
     except JWTError:
-        raise credentials_exception
+        raise CredentialsException(name='get_current_user')
     user = user_crud.get_user_by_username(db, username=token_data.username)
     if user is None:
-        raise credentials_exception
+        raise CredentialsException(name='get_current_user')
     return user
 
 

@@ -25,7 +25,8 @@ class BaseResponseDTO(BaseModel):
            List[ChatRoomResDTO] |
            List[WeatherWeekResDTO] |
            List[UserResDTO] |
-           List[PostResDTO]
+           List[PostResDTO] |
+           None
            ) = None
     detail: str
 
