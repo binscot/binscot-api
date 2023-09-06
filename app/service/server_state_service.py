@@ -1,7 +1,7 @@
 import json
 
 from app.core.config import settings
-from app.schemas import mail_schemas
+from app.schemas.mail_schemas import EmailReqDTO
 from app.schemas.map_schemas import MapReqDTO
 from app.service import weather_service, mail_service
 from app.utils import miscellaneous_util
@@ -38,7 +38,7 @@ def get_server_state():
             "sunset_seoul": weather_seoul.sunset.strftime("%m월%d일 %H시%M분")
         }
 
-        return mail_schemas.EmailData(to_email=to_email, subject=subject, body=json.dumps(replacements),
+        return EmailReqDTO(to_email=to_email, subject=subject, body=json.dumps(replacements),
                                       template=mail_template)
     except Exception as e:
         return e

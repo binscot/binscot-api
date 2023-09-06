@@ -1,7 +1,7 @@
 from pydantic import BaseModel, EmailStr, field_validator
 
 
-class EmailData(BaseModel):
+class EmailReqDTO(BaseModel):
     to_email: EmailStr
     subject: str
     body: str
